@@ -4,32 +4,24 @@
 	error_reporting(E_ALL);
 	ini_set("display_errors", "on");
 
-	include_once "../classes/controller.php";
+	//get the main page controller
+	include_once "../controller/main_page_controller.php";
+	//get data (3 is number of articles)
+	$articles = $controller->getPage(3);
+	//get the total number of pages
+	$numberOfPages = $controller->getNumberOfPages(3);
+	//get the current page
+	$currentPage = $controller->getCurrentPage();
 
-	$numberOfPages = $controller->getNumberOfPages();
-
-	if(isset($_REQUEST['page']) )
-		$currentPage = $_REQUEST['page'];
-	else
-		$currentPage = 1;
-
-
+	// TESTING below
 	//$model = new Model("TextFiles", "/var/www/timur.com/data/articlestextfiles");
 	//$model->deleteArticle(13);
 
-	//удаляем статью, если был запрос
-	$controller->deleteArticle();
-	//генерация случайной статьи
-	$controller->addRandomArticle();
-	//получаем статьи для текущей страницы
-	$articles = $controller->getPage();
 	//$article = new Article(0, "name7", "content7", "author7");
 	//$controller = new Controller();
 	//$controller->addNewArticle("name8", "author8", "content8");
-	
-	//$controller = new Controller();
 ?>
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 	<title>База знаний по веб-программированию</title>

@@ -1,6 +1,6 @@
 <?php
 	require_once "modelTextFiles.php";
-	require_once "article.php";
+	require_once "../classes/article.php";
 	class Model
 	{
 		private $modelProxy;

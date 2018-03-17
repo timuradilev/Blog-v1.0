@@ -4,9 +4,11 @@
 	error_reporting(E_ALL);
 	ini_set("display_errors", "on");
 
-	include_once "../classes/controller.php";
+	//get the new article controller
+	include_once "../controller/new_article_controller.php";
 ?>
 
+<!DOCTYPE html>
 <html lang='ru'>
 <head>
 	<meta charset='utf-8'>
@@ -17,17 +19,6 @@
 <body>
 <?php include "../views/header.html"; ?>
 <div class="container">
-	<!-- 
-		получение данных из формы
-	-->
-	<?php 
-		if(isset($_POST['submit'])) {
-			$controller->addNewArticle($_POST['ArticleName'], "test", $_POST['ArticleText']);
-			//техника Post/Redirect/Get
-			header("Location: ".$_SERVER['REQUEST_URI']);
-			exit();
-		}
-	?>
 	<!--
 		Форма ввода названия и текста статьи
 	-->
