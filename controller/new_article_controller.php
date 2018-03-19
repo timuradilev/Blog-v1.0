@@ -2,7 +2,7 @@
 	require_once "../model/model.php";
 	require_once "../classes/article.php";
 
-	class newArticleController
+	class NewArticleController
 	{
 		private $model;
 
@@ -49,4 +49,4 @@
 		}
 	}
 
-	$controller = new newArticleController();
+	$controller = new NewArticleController();

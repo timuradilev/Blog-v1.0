@@ -2,7 +2,7 @@
 	require_once "../model/model.php";
 	require_once "../classes/article.php";
 
-	class mainPageController
+	class MainPageController
 	{
 		private $model;
 		private $protocol = "http://";
@@ -71,4 +71,4 @@
 		}
 	}
 
-	$controller = new mainPageController();
+	$controller = new MainPageController();
