@@ -1,5 +1,6 @@
 <?php
 	require_once "../classes/article.php";
+	require_once "user_model.php";
 	class ModelTextFiles
 	{
 		public $path;
@@ -11,8 +12,9 @@
 		//вернуть $number статей начиная со статьи, имеющей позицию $offset по отношению к самой новой странице(у нее позиция - 0).
 		public function getNArticles($offset, $number)
 		{
+			global $auth;
 			//определить id нужной статьи
-			for($curId = $this->getLastId(), $curPos = 0; $curId &&  $curPos != $offset; --$curId) {
+			for($curId = $this->getLastId(), $curPos = 0; $curId && $curPos != $offset; --$curId) {
 				if(file_exists("{$this->path}/$curId"))
 					++$curPos;
 			}
@@ -23,12 +25,14 @@
 
 					$file = fopen("{$this->path}/$curId", "rt");
 					$articleName = fgets($file);
-					$articleAuthor = fgets($file);
+					$articleAuthorUID = fgets($file);
 					$articleCreationDate = fgets($file);
 					$articleContent = file_get_contents("{$this->path}/$curId", false, null, ftell($file));
 					fclose($file);
 
-					$articles[] = new Article($curId, $articleName, $articleContent, $articleAuthor, $articleCreationDate);
+					$user = (new UserModel())->getUserByID($articleAuthorUID);
+
+					$articles[] = new Article($curId, $articleName, $articleContent, $user->getUserName(), $articleCreationDate, $articleAuthorUID);
 				}
 			}
 			return $articles;
@@ -47,7 +51,7 @@
 			$lastIdFile = fopen($lastIdFileName, "w+t") or die("Не могу открыть файл!");
 			//Записать в файл все данные
 			fwrite($file, $article->name."\n");
-			fwrite($file, $article->author."\n");
+			fwrite($file, $article->getAuthorUID()."\n");
 			fwrite($file, $article->creationDate."\n");
 			fwrite($file, $article->content."\n");
 			//изменить lastId

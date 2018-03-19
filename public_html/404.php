@@ -1,3 +1,4 @@
+<?php require_once "../controller/authentication.php"; ?>
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -5,7 +6,7 @@
 	<?php include "../views/head_template.html"; ?>
 </head>
 <body>
-	<?php include "../views/header.html"; ?>
+	<?php include "../views/header.php"; ?>
 	<div class="h3 text-center mt-5">Страница не найдена</div>
 
 	<?php include "../views/body_footer_template.html"; ?>

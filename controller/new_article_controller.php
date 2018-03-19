@@ -1,6 +1,7 @@
 <?php
-	require_once "../model/model.php";
+	require_once "../controller/authentication.php";
 	require_once "../classes/article.php";
+	require_once "../model/model.php";
 
 	class NewArticleController
 	{
@@ -13,7 +14,7 @@
 
 			//actions
 			if(isset($_POST['submit'])) {
-				$this->addNewArticle($_POST['ArticleName'], "test", $_POST['ArticleText']);
+				$this->addNewArticle($_POST['ArticleName'], $_POST['ArticleText']);
 
 				header("Location: /");
 				exit();
@@ -26,12 +27,12 @@
 			}
 		}
 
-		private function addNewArticle(string $name, string $author, string $text)
+		private function addNewArticle(string $name, string $text)
 		{
 			//validate data
 			if(!$name || !$author || !$text)
 				return "Текст слишком короткий";
-			$article = new Article(-1, $name, $text, $author);
+			$article = new Article(null, $name, $text, $author);
 			//save the article
 			$this->model->saveNewArticle($article);
 		}
@@ -43,7 +44,7 @@
 
 			$name = $loremIpsum[0];
 			$text = $loremIpsum[2];
-			$article = new Article(-1, $name, $text, "Generator");
+			$article = new Article(null, $name, $text, null, "now", $GLOBALS['auth']->getUserID());
 
 			$this->model->saveNewArticle($article);
 		}

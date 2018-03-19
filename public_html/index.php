@@ -5,14 +5,13 @@
 	ini_set("display_errors", "on");
 
 	//get the main page controller
-	include_once "../controller/main_page_controller.php";
+	require_once "../controller/main_page_controller.php";
 	//get data (3 is number of articles)
 	$articles = $controller->getPage(3);
 	//get the total number of pages
 	$numberOfPages = $controller->getNumberOfPages(3);
 	//get the current page
-	$currentPage = $controller->getCurrentPage();
-
+	$currentPage = $controller->getCurrentPageNumber();
 	// TESTING below
 	//$model = new Model("TextFiles", "/var/www/timur.com/data/articlestextfiles");
 	//$model->deleteArticle(13);
@@ -28,9 +27,9 @@
 	<?php include "../views/head_template.html"; ?>
 </head>
 <body>
-<?php include "../views/header.html"; ?>
+<?php include "../views/header.php"; ?>
 <div class="container">
-	<?php include "../views/pagination.html"; ?>
+	<?php include "../views/pagination.php"; ?>
 	<!--
 		Вывод статей
 	-->
@@ -40,10 +39,11 @@
 	<!-- 
 		Удаление статьи
 	-->
+	<?php if($controller->userAllowedToDelete()) : ?>
 	<button type="button" class="close float-left" data-toggle="modal" data-target="#deleteArticle<?=$art->id?>" aria-label="Close">
   		<span aria-hidden="true">&times;</span>
 	</button>
-
+	<?php endif; ?>
 	<!-- 
 		Modal 
 	-->
@@ -75,7 +75,7 @@
 	<p class="text-success"><?=$art->content?></p>
 	<hr> <br />
 	<?php } ?>
-	<?php include "../views/pagination.html"; ?>
+	<?php include "../views/pagination.php"; ?>
 </div>	<!-- .container ends here -->
 	<?php include "../views/body_footer_template.html"; ?>
 </body>

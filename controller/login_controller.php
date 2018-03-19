@@ -1,6 +1,8 @@
 <?php
 	//first, check whether user is authorized
 	require_once "authentication.php";
+	require_once "../model/user_model.php";
+	require_once "../classes/user.php";
 
 	class LoginController
 	{
@@ -12,13 +14,13 @@
 				exit();
 			// if there are email and password, check them
 			} elseif(!empty($_REQUEST['email']) && !empty($_REQUEST['password'])) {
-				$usersRaw = file_get_contents("../data/users/users.data");
-				$users = unserialize($usersRaw);
+				$userModel = new UserModel();
+				$users = $userModel->getUsers();
 
 				foreach($users as &$user) {
 					if($_REQUEST['email'] === $user->getEmail())
 						if(password_verify($_REQUEST['password'], $user->getHashedPassword())) {
-							//sid
+							//new sid
 							session_start([
 								"name"            => "sid",
 								"cookie_lifetime" => 2678400,
@@ -30,9 +32,7 @@
 							setcookie("uid", $user->getUID(), time() + 2678400);
 
 							//save user's data
-							$file = fopen("../data/users/users.data", "wt");
-							fwrite($file, serialize($users));
-							fclose($file);
+							$userModel->updateUser($user);
 
 							//redirect to the main page
 							header("Location: /");

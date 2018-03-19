@@ -22,8 +22,15 @@
 			$this->uid = $uid;
 			$this->sid = $sid;
 
-			$this->sid = null;
 			$this->lastAuthDate = time();
+		}
+		public static function getGuestUser() : User
+		{
+			return new User(null, null, USERROLE_GUEST, null, null, null);
+		}
+		public function getUserName()
+		{
+			return $this->name;
 		}
 		public function getEmail()
 		{
@@ -49,7 +56,7 @@
 		{
 			return $this->uid;
 		}
-		public function gerRole()
+		public function getRole()
 		{
 			return $this->role;
 		}

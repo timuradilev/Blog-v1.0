@@ -1,5 +1,6 @@
 <?php
 	require_once "../classes/user.php";
+	require_once "../model/user_model.php";
 
 	class Authentication
 	{
@@ -8,15 +9,32 @@
 		public function __construct()
 		{
 			//check uid in cookie
+			if(isset($_COOKIE['uid'])) {
+				$uid = $_COOKIE['uid'];
 
-			//if no user with such uid
-			//if
+				if(false != ($this->user = (new UserModel)->getUserByID($uid)))
+					return;
+			}
+
+			//if no user with such uid or no uid
+			$this->user = User::getGuestUser();
 		}
 
 		public function isAuthorized()
 		{
-			//return $user->getRole() != USERROLE_GUEST;
-			return false;
+			return $this->user->getRole() != USERROLE_GUEST;
+		}
+		public function isAdmin()
+		{
+			return $this->user->getRole() == USERROLE_ADMIN;
+		}
+		public function getUserID()
+		{
+			return $this->user->getUID();
+		}
+		public function getUserName()
+		{
+			return $this->user->getUserName();
 		}
 	}
 

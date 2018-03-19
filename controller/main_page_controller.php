@@ -1,6 +1,7 @@
 <?php
 	require_once "../model/model.php";
 	require_once "../classes/article.php";
+	require_once "authentication.php";
 
 	class MainPageController
 	{
@@ -40,7 +41,7 @@
 			$this->model->deleteArticle($_POST['deleteSubmit']);
 		}
 
-		public function getCurrentPage()
+		public function getCurrentPageNumber()
 		{
 			if(isset($_REQUEST['page']) )
 				return $_REQUEST['page'];
@@ -68,6 +69,15 @@
 		public function makePrevPageUrl() : string
 		{
 			return $this->protocol.$_SERVER['SERVER_NAME']."/?page=".(isset($_REQUEST['page']) ? $_REQUEST['page'] - 1 : 2);
+		}
+		public function userAllowedToDelete()
+		{
+			global $auth;
+			if($auth->isAdmin())
+				return true;
+			else {
+				//true if the user is the author of this article
+			}
 		}
 	}
 

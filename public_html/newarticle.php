@@ -6,6 +6,7 @@
 
 	//get the new article controller
 	include_once "../controller/new_article_controller.php";
+	require_once "../controller/authentication.php";
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +18,7 @@
 	<?php include "../views/head_template.html"; ?>
 </head>
 <body>
-<?php include "../views/header.html"; ?>
+<?php include "../views/header.php"; ?>
 <div class="container">
 	<!--
 		Форма ввода названия и текста статьи
