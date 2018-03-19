@@ -1,3 +1,4 @@
+<?php require_once "../controller/authentication.php"; ?>
 <div class="container">
 	<!--
 		Название сайта и ссылка на создание статей
