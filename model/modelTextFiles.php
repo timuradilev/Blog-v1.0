@@ -86,14 +86,14 @@
 		{
 			//открыть текущий каталог
 			//посчитать количество файлов, не считая файл lastid.data
-			$dir = opendir($this->path);
+			$dir = dir($this->path);
 
 			$count = 0;
-			while(false !== ($file = readdir($dir))) {
+			while(false !== ($file = $dir->read())) {
 				++$count;
 			}
 
-			closedir($dir);
+			$dir->close();
 
 			return $count - 3; // три файла: ".", ".." и 'lastid.data'
 		}
