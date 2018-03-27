@@ -10,6 +10,12 @@
 		//preps and actions
 		public function __construct()
 		{
+			global $auth;
+			if(!$auth->isAuthorized()) {
+				header("Location: /");
+				exit();
+			}
+
 			$this->model = new Model("TextFiles", "../data/articlestextfiles");
 
 			//actions

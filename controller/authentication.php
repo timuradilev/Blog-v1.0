@@ -11,15 +11,22 @@
 			//check uid in cookie
 			if(isset($_COOKIE['uid'])) {
 				$uid = $_COOKIE['uid'];
-
-				if(false != ($this->user = (new UserModel)->getUserByID($uid)))
-					return;
+				//check sid in cookie
+				if(false != ($this->user = (new UserModel)->getUserByID($uid))) {
+					$userSID = $this->user->getSID();
+					if($userSID != null && $userSID == $_COOKIE['sid']) // -1 means user logged out
+						return;
+				}
 			}
 
 			//if no user with such uid or no uid
 			$this->user = User::getGuestUser();
 		}
 
+		public function getUser()
+		{
+			return $this->user;
+		}
 		public function isAuthorized()
 		{
 			return $this->user->getRole() != USERROLE_GUEST;

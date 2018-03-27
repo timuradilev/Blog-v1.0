@@ -10,8 +10,14 @@
 		{
 			global $auth;
 			if($auth->isAuthorized()) { // if user or admin
-				header("Location: /"); // redirect to the main page
-				exit();
+				if($_REQUEST['action'] === "logout") {
+					$userModel = new UserModel();
+					$userModel->logout($auth->getUser());
+
+					//redirect to the main page
+					header("Location: /");
+					exit();
+				}
 			// if there are email and password, check them
 			} elseif(!empty($_REQUEST['email']) && !empty($_REQUEST['password'])) {
 				$userModel = new UserModel();
