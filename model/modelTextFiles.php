@@ -37,6 +37,22 @@
 			}
 			return $articles;
 		}
+		//возвращает статью с указанным id
+		public function getArticle($id)
+		{
+			if(file_exists("{$this->path}/$id")) {
+				$file = fopen("{$this->path}/$id", "rt");
+				$articleName = fgets($file);
+				$articleAuthorUID = fgets($file);
+				$articleCreationDate = fgets($file);
+				$articleContent = file_get_contents("{$this->path}/$id", false, null, ftell($file));
+				fclose($file);
+
+				$user = (new UserModel())->getUserByID($articleAuthorUID);
+
+				return new Article($id, $articleName, $articleContent, $user->getUserName(), $articleCreationDate, $articleAuthorUID);
+			}
+		}
 		//сохранить новую статью
 		public function saveNewArticle(Article $article)
 		{
@@ -63,6 +79,7 @@
 		//удалить статью
 		public function deleteArticle($id) : bool
 		{
+			echo "test";
 			//если статья сущ.
 			if(file_exists("{$this->path}/$id")) {
 				//если статья является самой новой и ее ИД хранится в файле lastid.data

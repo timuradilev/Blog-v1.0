@@ -31,6 +31,10 @@
 		{
 			return $this->modelProxy->getNArticles($offset, $number);
 		}
+		public function getArticle($id)
+		{
+			return $this->modelProxy->getArticle($id);
+		}
 		public function saveNewArticle(Article $article)
 		{
 			$this->modelProxy->saveNewArticle($article);

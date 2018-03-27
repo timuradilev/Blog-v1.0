@@ -1,3 +1,9 @@
 hr {
 	margin-top: 0;
 }
+.article_title_link {
+	color: black;
+}
+.article_title_link:hover {
+	text-decoration: none;
+}

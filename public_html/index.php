@@ -31,21 +31,20 @@
 <div class="container">
 	<?php include "../views/pagination.php"; ?>
 	<!--
-		Вывод статей
+		output articles
 	-->
 	<?php foreach($articles as $art) { ?>
-	<h4><?=$art->name?></h4>
+	<h4><a class="article_title_link" href="article.php?id=<?=$art->id; ?>"><?=$art->name?></a></h4>
 	<em class="text-secondary"><?=$art->id?></em>
 	<!-- 
-		Удаление статьи
+		delete button
 	-->
-	<?php if($controller->userAllowedToDelete()) : ?>
+	<?php if($controller->userAllowedToDelete($art)) : ?>
 	<button type="button" class="close float-left" data-toggle="modal" data-target="#deleteArticle<?=$art->id?>" aria-label="Close">
   		<span aria-hidden="true">&times;</span>
 	</button>
-	<?php endif; ?>
 	<!-- 
-		Modal 
+		Modal for delete button 
 	-->
 	<div class="modal fade" id="deleteArticle<?=$art->id?>" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
   		<div class="modal-dialog" role="document">
@@ -68,8 +67,9 @@
     		</div>
   		</div>
 	</div>
+	<?php endif; ?>
 	<!--
-		Вывод остальной части статьи
+		the rest of article
 	-->
 	<h6 class="text-secondary">Автор статьи <?=$art->author?>. Создал <?=$art->creationDate?></h6>
 	<p class="text-success"><?=$art->content?></p>

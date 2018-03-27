@@ -4,9 +4,7 @@
 	error_reporting(E_ALL);
 	ini_set("display_errors", "on");
 
-	//get the new article controller
 	include_once "../controller/new_article_controller.php";
-	require_once "../controller/authentication.php";
 ?>
 
 <!DOCTYPE html>

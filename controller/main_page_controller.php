@@ -70,14 +70,10 @@
 		{
 			return $this->protocol.$_SERVER['SERVER_NAME']."/?page=".(isset($_REQUEST['page']) ? $_REQUEST['page'] - 1 : 2);
 		}
-		public function userAllowedToDelete()
+		public function userAllowedToDelete($article)
 		{
 			global $auth;
-			if($auth->isAdmin())
-				return true;
-			else {
-				//true if the user is the author of this article
-			}
+			return $auth->isAdmin() || $auth->getUser()->getUID() == $article->getAuthorUID();
 		}
 	}
 
