@@ -1,19 +1,19 @@
 <?php
-	require_once "authentication.php";
 	require_once "../model/model.php";
+	require_once "../model/user_model.php";
 
 	class ArticleController
 	{
 		private $model;
+		private $userModel;
 		private $article;
 		public function __construct()
 		{
 			$this->model = new Model("TextFiles", "../data/articlestextfiles");
+			$this->userModel = new UserModel();
 			$this->article = $this->model->getArticle($_REQUEST['id']);
-
-			global $auth;
-			if($auth->isAuthorized() && isset($_REQUEST['deleteSubmit'])) {
-				$this->model->deleteArticle($_REQUEST['deleteSubmit']);
+			if($this->userModel->isAuthorized() && isset($_REQUEST['action']) && $_REQUEST['action'] === "delete") {
+				$this->model->deleteArticle($_REQUEST['id']);
 
 				header("Location: /");
 				exit();
@@ -25,8 +25,15 @@
 		}
 		public function userAllowedToDelete()
 		{
-			global $auth;
-			return $auth->isAdmin() || $auth->getUser()->getUID() == $this->article->getAuthorUID();
+			return $this->userModel->isAdmin() || $this->userModel->getUserID() == $this->article->getAuthorUID();
+		}
+		public function getUserName()
+		{
+			return $this->userModel->getUserName();
+		}
+		public function isAuthorized()
+		{
+			return $this->userModel->isAuthorized();
 		}
 	}
 

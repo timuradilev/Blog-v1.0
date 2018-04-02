@@ -22,16 +22,16 @@
 		Форма ввода названия и текста статьи
 	-->
 	<h4>Разместить статью</h4>
-	<form action="<?=$_SERVER['REQUEST_URI'];?>" method="POST">
+	<form action="newarticle.php" method="POST">
   		<div class="form-group">
     		<label for="ArticleNameInput">Заголовок</label>
-    		<input type="text" class="form-control" id="ArticleNameInput" placeholder="Название статьи" name="ArticleName" required>
+    		<input type="text" class="form-control" id="ArticleNameInput" placeholder="Название статьи" name="title" required>
   		</div>
   		<div class="form-group">
     		<label for="TextInput">Текст</label>
-    		<textarea class="form-control" id="TextInput" rows="15" name="ArticleText" required></textarea>
+    		<textarea class="form-control" id="TextInput" rows="15" name="content" required></textarea>
   		</div>
-  		<button type="submit" class="btn btn-success" name="submit" value="submit">Опубликовать</button>
+  		<button type="submit" class="btn btn-success" name="action" value="newarticle">Опубликовать</button>
 	</form>
 </div>
 	<?php include "../views/body_footer_template.html"; ?>

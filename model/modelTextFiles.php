@@ -12,7 +12,7 @@
 		//вернуть $number статей начиная со статьи, имеющей позицию $offset по отношению к самой новой странице(у нее позиция - 0).
 		public function getNArticles($offset, $number)
 		{
-			global $auth;
+			$articles = [];
 			//определить id нужной статьи
 			for($curId = $this->getLastId(), $curPos = 0; $curId && $curPos != $offset; --$curId) {
 				if(file_exists("{$this->path}/$curId"))
@@ -24,6 +24,7 @@
 					--$number;
 
 					$file = fopen("{$this->path}/$curId", "rt");
+					flock($file, LOCK_SH);
 					$articleName = fgets($file);
 					$articleAuthorUID = fgets($file);
 					$articleCreationDate = fgets($file);
@@ -32,7 +33,7 @@
 
 					$user = (new UserModel())->getUserByID($articleAuthorUID);
 
-					$articles[] = new Article($curId, $articleName, $articleContent, $user->getUserName(), $articleCreationDate, $articleAuthorUID);
+					$articles[] = new Article($curId, $articleName, $articleContent, $articleAuthorUID, $user->getUserName(),$articleCreationDate);
 				}
 			}
 			return $articles;
@@ -42,6 +43,7 @@
 		{
 			if(file_exists("{$this->path}/$id")) {
 				$file = fopen("{$this->path}/$id", "rt");
+				flock($file, LOCK_SH);
 				$articleName = fgets($file);
 				$articleAuthorUID = fgets($file);
 				$articleCreationDate = fgets($file);
@@ -50,24 +52,30 @@
 
 				$user = (new UserModel())->getUserByID($articleAuthorUID);
 
-				return new Article($id, $articleName, $articleContent, $user->getUserName(), $articleCreationDate, $articleAuthorUID);
+				return new Article($id, $articleName, $articleContent, $articleAuthorUID, $user->getUserName(), $articleCreationDate);
 			}
 		}
 		//сохранить новую статью
-		public function saveNewArticle(Article $article)
+		public function saveNewArticle($title, $content)
 		{
+			$userModel = new UserModel();
 			//новый id
-			$article->id = $this->getLastId() + 1;
+			$id = $this->getLastId() + 1;
+			$uid = $userModel->getUserID();
+			$author = $userModel->getUserName();
+			$article = new Article($id, $title, $content, $uid, $author);
 			//Создать файл
-			$newFileName = (string)$article->id;
+			$newFileName = (string)$id;
 			if(($file = fopen("{$this->path}/$newFileName", "xt")) === false)
 				throw new Exception("Failed to create a new file!");
-
+			flock($file, LOCK_EX);
 			$lastIdFileName = "{$this->path}/lastid.data";
-			$lastIdFile = fopen($lastIdFileName, "w+t") or die("Не могу открыть файл!");
+			$lastIdFile = fopen($lastIdFileName, "r+t") or die("Не могу открыть файл!");
+			flock($lastIdFile, LOCK_EX);
+			ftruncate($lastIdFile, 0);
 			//Записать в файл все данные
-			fwrite($file, $article->name."\n");
-			fwrite($file, $article->getAuthorUID()."\n");
+			fwrite($file, $article->title."\n");
+			fwrite($file, $article->authorUID."\n");
 			fwrite($file, $article->creationDate."\n");
 			fwrite($file, $article->content."\n");
 			//изменить lastId
@@ -88,15 +96,16 @@
 					for(--$lastId; $lastId && !file_exists("{$this->path}/$lastId"); --$lastId);
 
 					//записать новый lastid
-					$file = fopen("{$this->path}/lastid.data", "w+t");
+					$file = fopen("{$this->path}/lastid.data", "r+t");
+					flock($file, LOCK_EX);
+					ftruncate($file, 0);
 					fwrite($file, $lastId);
 					fclose($file);
-
-					unlink("{$this->path}/$id");
-				} else {
-					unlink("{$this->path}/$id");
 				}
-
+				$file = fopen("{$this->path}/$id", "r");
+				flock($file, LOCK_EX);
+				unlink("{$this->path}/$id");
+				fclose($file);
 				return true;
 			} else {
 				return false;

@@ -35,9 +35,9 @@
 		{
 			return $this->modelProxy->getArticle($id);
 		}
-		public function saveNewArticle(Article $article)
+		public function saveNewArticle($title, $content)
 		{
-			$this->modelProxy->saveNewArticle($article);
+			$this->modelProxy->saveNewArticle($title, $content);
 		}
 		public function getLastId()
 		{

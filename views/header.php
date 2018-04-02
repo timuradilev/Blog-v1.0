@@ -7,12 +7,12 @@
 		<a class="h4" href="/">Блог</a>
 	</div>
 	<div class="col-md-5">
-		<?php if($auth->isAuthorized()): //not guest?>
+		<?php if($controller->isAuthorized()): ?>
 		<a class="btn btn-info" href="newarticle.php?action=random">Random</a>
 		<a class="btn btn-dark" href="newarticle.php">Написать</a>
 	</div>
 	<div class="col-md-3">
-		<span class="h4"><?= $auth->getUserName(); ?></span>
+		<span class="h4"><?=$controller->getUserName(); ?></span>
 		<a class="btn btn-warning float-right" href="login.php?action=logout">Выйти</a>
 		<?php else: ?>
 		<a class="btn btn-dark float-right" href="register.php">Регистрация</a>

@@ -13,14 +13,14 @@
 		protected $sid;
 		protected $lastAuthDate;
 
-		public function __construct($name, $email, $role, $hashedPassword, $uid)
+		public function __construct($name, $email, $role, $hashedPassword, $uid, $sid)
 		{
 			$this->name = $name;
 			$this->email = $email;
 			$this->role = $role;
 			$this->hashedPassword = $hashedPassword;
 			$this->uid = $uid;
-			$this->sid = null;
+			$this->sid = $sid;
 
 			$this->lastAuthDate = time();
 		}

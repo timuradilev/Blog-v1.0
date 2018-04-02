@@ -1,25 +1,18 @@
 <?php
 	require_once "../model/model.php";
 	require_once "../classes/article.php";
-	require_once "authentication.php";
+	require_once "../model/user_model.php";
 
 	class MainPageController
 	{
 		private $model;
+		private $userModel;
 		private $protocol = "http://";
 
-		//preps and makes some actions like: delete articles and etc
 		public function __construct()
 		{
 			$this->model = new Model("TextFiles", "../data/articlestextfiles");
-
-
-			if(isset($_POST['deleteSubmit'])) {
-				$this->deleteArticle();
-				//Post/Redirection/GET method
-				header("Location: ".$_SERVER['REQUEST_URI']);
-				exit();
-			}
+			$this->userModel = new UserModel();
 		}
 		//get data for the page
 		public function getPage($numOfEntries)
@@ -35,12 +28,6 @@
 				header("Location: 404.php");
 			}
 		}
-		//
-		private function deleteArticle()
-		{
-			$this->model->deleteArticle($_POST['deleteSubmit']);
-		}
-
 		public function getCurrentPageNumber()
 		{
 			if(isset($_REQUEST['page']) )
@@ -72,8 +59,15 @@
 		}
 		public function userAllowedToDelete($article)
 		{
-			global $auth;
-			return $auth->isAdmin() || $auth->getUser()->getUID() == $article->getAuthorUID();
+			return $this->userModel->isAuthorized() ? $this->userModel->isAdmin() || $this->userModel->getUserID() == $article->authorUID : false;
+		}
+		public function isAuthorized()
+		{
+			return $this->userModel->isAuthorized();
+		}
+		public function getUserName()
+		{
+			return $this->userModel->getUserName();
 		}
 	}
 

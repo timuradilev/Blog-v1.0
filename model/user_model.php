@@ -3,16 +3,23 @@
 
 	class UserModel
 	{
-		protected $path = "../data/users/users.data";
+		private $path = "../data/users/users.data";
+		private $user; // current user
 
-		//public function __construct()
-		//{
-
-		//}
-		public function getUsers()
+		public function __construct()
 		{
-			$usersRaw = file_get_contents($this->path);
-			return unserialize($usersRaw);
+			//check uid in cookie
+			if(isset($_COOKIE['uid']) && isset($_COOKIE['sid'])) {
+				$uid = $_COOKIE['uid'];
+				$sid = $_COOKIE['sid'];
+				//check sid in cookie
+				if(false != ($this->user = $this->getUserByID($uid))) {
+					$userSID = $this->user->getSID();
+					if($userSID == $sid)
+						return;
+				}
+			}
+			$this->user = User::getGuestUser();
 		}
 		public function createNewUser($name, $email, $password)
 		{
@@ -23,13 +30,19 @@
 			});
 			$newUID = end($users)->getUID() + 1;
 
-			$newUser = new User($name, $email, USERROLE_USER, password_hash($password, PASSWORD_DEFAULT), $newUID);
+			//make sid and login user 
+			session_start([
+							"name"            => "sid",
+							"cookie_lifetime" => 2678400,
+							"read_and_close"  => true
+						]);
+			$sid = session_id();
+			setcookie("uid", $newUID, time() + 2678400);
+
+			$newUser = new User($name, $email, USERROLE_USER, password_hash($password, PASSWORD_DEFAULT), $newUID, $sid);
 
 			$users[] = $newUser;
-			$file = fopen($this->path, "wt");
-			fwrite($file, serialize($users));
-			fclose($file);
-			print_r($users);
+			$this->saveUsers($users);
 
 		}
 		//returns user with given uid of false
@@ -52,30 +65,74 @@
 				if($user->getUID() == $userOld->getUID()) {
 					$userOld = clone $user;
 
-					$file = fopen($this->path, "wt");
-					fwrite($file, serialize($users));
-					fclose($file);
-
+					$this->saveUsers($users);
 					return;
 				}
 			}
 			throw new Exception("No such user!");
 		}
-		public function logout($user)
+		//returns true if email and password are correct
+		public function login($email, $password)
 		{
-			session_start(["name" => "sid"]);
+			$users = $this->getUsers();
 
+			foreach($users as &$user) {
+				if($email === $user->getEmail())
+					if(password_verify($password, $user->getHashedPassword())) {
+						//reuse sid
+						session_id($user->getSID());
+						session_start([
+							"name"            => "sid",
+							"cookie_lifetime" => 2678400,
+							"read_and_close"  => true
+						]);
+						$user->setNewAuthDate();
+						//uid
+						setcookie("uid", $user->getUID(), time() + 2678400);
+
+						//save user's data
+						$this->updateUser($user);
+
+						return true;
+					}
+			}
+			return false;
+		}
+		public function logout()
+		{
 			setcookie("uid", "", time() - 3600);
-			setcookie(session_name(), "", time() - 3600);
-
-			$_SESSION = [];
-			//$sessionName = session_name();
-			unset($_COOKIE[session_name()]);
-			session_destroy();
-
-			
-
-			$user->setSID(null);
-			$this->updateUser($user);
+			setcookie("sid", "", time() - 3600);	
+		}
+		public function isAuthorized()
+		{
+			return $this->user->getRole() != USERROLE_GUEST;
+		}
+		public function isAdmin()
+		{
+			return $this->user->getRole() == USERROLE_ADMIN;
+		}
+		public function getUserID()
+		{
+			return $this->user->getUID();
+		}
+		public function getUserName()
+		{
+			return $this->user->getUserName();
+		}
+		private function getUsers()
+		{
+			$file = fopen($this->path, "r");
+			flock($file, LOCK_SH);
+			$usersRaw = file_get_contents($this->path);
+			fclose($file);
+			return unserialize($usersRaw);
+		}
+		private function saveUsers($users)
+		{
+			$file = fopen($this->path, "r+t");
+			flock($file, LOCK_EX);
+			ftruncate($file, 0);
+			fwrite($file, serialize($users));
+			fclose($file);
 		}
 	}

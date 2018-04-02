@@ -1,58 +1,50 @@
 <?php
-	require_once "../controller/authentication.php";
 	require_once "../classes/article.php";
 	require_once "../model/model.php";
+	require_once "../model/user_model.php";
 
 	class NewArticleController
 	{
 		private $model;
+		private $userModel;
 
 		//preps and actions
 		public function __construct()
 		{
-			global $auth;
-			if(!$auth->isAuthorized()) {
+			$this->model = new Model("TextFiles", "../data/articlestextfiles");
+			$this->userModel = new UserModel();
+
+			if(!$this->userModel->isAuthorized()) {
 				header("Location: /");
 				exit();
 			}
-
-			$this->model = new Model("TextFiles", "../data/articlestextfiles");
 
 			//actions
-			if(isset($_POST['submit'])) {
-				$this->addNewArticle($_POST['ArticleName'], $_POST['ArticleText']);
-
+			if(isset($_REQUEST['action']) && $_REQUEST['action'] === "newarticle") {
+				$this->model->saveNewArticle($_REQUEST['title'], $_REQUEST['content']);
 				header("Location: /");
 				exit();
 			}
-			elseif(@$_GET['action'] === 'random') {
-				$this->addRandomArticle();
+			elseif(isset($_REQUEST['action']) && $_REQUEST['action'] === 'random') {
+				//make random title and content
+				$loremIpsum = array_map("strip_tags", file("http://loripsum.net/api/1/short/headers", FILE_IGNORE_NEW_LINES));
+
+				$title = $loremIpsum[0];
+				$content = $loremIpsum[2];
+
+				$this->model->saveNewArticle($title, $content);
 
 				header("Location: /");
 				exit();
 			}
 		}
-
-		private function addNewArticle(string $name, string $text)
+		public function isAuthorized()
 		{
-			//validate data
-			if(!$name || !$author || !$text)
-				return "Текст слишком короткий";
-			$article = new Article(null, $name, $text, $author);
-			//save the article
-			$this->model->saveNewArticle($article);
+			return $this->userModel->isAuthorized();
 		}
-
-		private function addRandomArticle()
+		public function getUserName()
 		{
-			//make random title and text
-			$loremIpsum = array_map("strip_tags", file("http://loripsum.net/api/1/short/headers", FILE_IGNORE_NEW_LINES));
-
-			$name = $loremIpsum[0];
-			$text = $loremIpsum[2];
-			$article = new Article(null, $name, $text, null, "now", $GLOBALS['auth']->getUserID());
-
-			$this->model->saveNewArticle($article);
+			return $this->userModel->getUserName();
 		}
 	}
 

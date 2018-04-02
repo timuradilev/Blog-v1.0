@@ -9,7 +9,7 @@
 <!doctype html>
 <html lang="ru">
 <head>
-	<title><?= $article->name; ?>/ Blog</title>
+	<title><?= $article->title; ?>/ Blog</title>
 	<?php include "../views/head_template.html"; ?>
 </head>
 <body>
@@ -18,7 +18,7 @@
 	<!--
 		output article's name and id
 	-->
-	<h4><?=$article->name?></h4>
+	<h4><?=$article->title?></h4>
 	<em class="text-secondary"><?=$article->id?></em>
 	<!-- 
 		delete button
@@ -44,8 +44,8 @@
       			</div>
       			<div class="modal-footer">
         			<button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-        			<form method="POST">
-        				<button type="submit" class="btn btn-primary" name="deleteSubmit" value="<?=$article->id;?>">Подтвердить</button>
+        			<form action="<?=$_SERVER['REQUEST_URI'];?>" method="POST">
+        				<button type="submit" class="btn btn-primary" name="action" value="delete">Подтвердить</button>
         			</form>
       			</div>
     		</div>

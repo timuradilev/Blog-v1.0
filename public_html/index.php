@@ -34,7 +34,7 @@
 		output articles
 	-->
 	<?php foreach($articles as $art) { ?>
-	<h4><a class="article_title_link" href="article.php?id=<?=$art->id; ?>"><?=$art->name?></a></h4>
+	<h4><a class="article_title_link" href="article.php?id=<?=$art->id; ?>"><?=$art->title?></a></h4>
 	<em class="text-secondary"><?=$art->id?></em>
 	<!-- 
 		delete button
@@ -60,8 +60,8 @@
       			</div>
       			<div class="modal-footer">
         			<button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-        			<form method="POST">
-        				<button type="submit" class="btn btn-primary" name="deleteSubmit" value="<?=$art->id;?>">Подтвердить</button>
+        			<form action="article.php?id=<?=$art->id;?>" method="POST">
+        				<button type="submit" class="btn btn-primary" name="action" value="delete">Подтвердить</button>
         			</form>
       			</div>
     		</div>
