@@ -39,7 +39,7 @@
 	<!-- 
 		delete button
 	-->
-	<?php if($controller->userAllowedToDelete($art)) : ?>
+	<?php if($controller->userAllowedToDelete($art->authorUID)) : ?>
 	<button type="button" class="close float-left" data-toggle="modal" data-target="#deleteArticle<?=$art->id?>" aria-label="Close">
   		<span aria-hidden="true">&times;</span>
 	</button>

@@ -58,6 +58,12 @@
 		//сохранить новую статью
 		public function saveNewArticle($title, $content)
 		{
+			//validate and encode
+			$userInputErrors = $this->validateNewArticleInfo($title, $content);
+			if($userInputErrors)
+				return $userInputErrors;
+			$content = htmlspecialchars($content, ENT_QUOTES);
+
 			$userModel = new UserModel();
 			//новый id
 			$id = $this->getLastId() + 1;
@@ -83,6 +89,8 @@
 			//Закрыть файлы
 			fclose($file);
 			fclose($lastIdFile);
+
+			return $userInputErrors;
 		}
 		//удалить статью
 		public function deleteArticle($id) : bool
@@ -138,6 +146,20 @@
 			fclose($file);
 
 			return (int)$id;
+		}
+		private function validateNewArticleInfo($title, $content)
+		{
+			$errors = false;
+
+			if(!filter_var($title, FILTER_VALIDATE_REGEXP, [
+				'options' => [
+					'regexp' => "/^[\d\w\p{P} ]{5,100}$/"
+				]]))
+				$errors['title'] = "incorrect title";
+			if(strlen($content) > 1000)
+				$errors['content'] = "content is too long";
+
+			return $errors;
 		}
 		/*/вернуть последние статьи. Первый элемент массива - самая последняя статья
 		public function getLastArticles(int $number)

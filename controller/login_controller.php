@@ -5,6 +5,7 @@
 
 	class LoginController
 	{
+		public $userInputErrors;
 		private $userModel;
 		public function __construct()
 		{
@@ -23,14 +24,9 @@
 					exit();
 				}
 			} elseif(isset($_REQUEST['action']) && $_REQUEST['action'] === "login") {
-				if($this->userModel->login($_REQUEST['email'], $_REQUEST['password'])) {
+				if($this->userModel->login($_REQUEST['email'], $_REQUEST['password'], $this->userInputErrors)) {
 					//redirect to the main page
 					header("Location: /");
-					exit();
-				} else {
-					//if no such user or in case of incorrect password
-					//redirect to this page to switch from POST to GET
-					header("Location: ".$_SERVER['REQUESTED_URI']);
 					exit();
 				}
 			} else {

@@ -38,10 +38,17 @@
 			  <div class="form-group">
 			    <label for="inputEmail1">Email address</label>
 			    <input type="email" class="form-control" id="inputEmail1" placeholder="Enter email" name="email">
+			    <?php if(!empty($controller->userInputErrors) && !empty($controller->userInputErrors['email'])): ?>
+			    	<small class="text-danger"><em><?=$controller->userInputErrors['email'];?></em></small>
+			    <?php endif; ?>
 			  </div>
 			  <div class="form-group">
 			    <label for="inputPassword1">Password</label>
-			    <input type="password" class="form-control" id="inputPassword1" placeholder="Password" name="password">
+			    <input type="password" class="form-control" id="
+			    inputPassword1" placeholder="Password" name="password">
+			    <?php if(!empty($controller->userInputErrors) && !empty($controller->userInputErrors['password'])): ?>
+			    	<small class="text-danger"><em><?=$controller->userInputErrors['password'];?></em></small>
+			    <?php endif; ?>
 			  </div>
 			  <button type="submit" class="btn btn-primary" name="action" value="login">Submit</button>
 			</form>

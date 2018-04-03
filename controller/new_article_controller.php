@@ -5,6 +5,7 @@
 
 	class NewArticleController
 	{
+		public $userInputErrors;
 		private $model;
 		private $userModel;
 
@@ -21,9 +22,12 @@
 
 			//actions
 			if(isset($_REQUEST['action']) && $_REQUEST['action'] === "newarticle") {
-				$this->model->saveNewArticle($_REQUEST['title'], $_REQUEST['content']);
-				header("Location: /");
-				exit();
+				$this->userInputErrors = $this->model->saveNewArticle($_REQUEST['title'], $_REQUEST['content']);
+
+				if(!$this->userInputErrors) {
+					header("Location: /");
+					exit();
+				}
 			}
 			elseif(isset($_REQUEST['action']) && $_REQUEST['action'] === 'random') {
 				//make random title and content

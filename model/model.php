@@ -37,7 +37,7 @@
 		}
 		public function saveNewArticle($title, $content)
 		{
-			$this->modelProxy->saveNewArticle($title, $content);
+			return $this->modelProxy->saveNewArticle($title, $content);
 		}
 		public function getLastId()
 		{

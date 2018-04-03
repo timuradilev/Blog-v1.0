@@ -4,6 +4,7 @@
 
 	class RegistrationController
 	{
+		public $userInputErrors;
 		private $userModel;
 		public function __construct()
 		{
@@ -14,10 +15,12 @@
 				exit();
 			} elseif(isset($_REQUEST['action']) && $_REQUEST['action'] === "register") {
 				if(!empty($_REQUEST['name']) && !empty($_REQUEST['email']) && !empty($_REQUEST['password'])) {
-					$this->userModel->createNewUser($_REQUEST['name'], $_REQUEST['email'], $_REQUEST['password']);
+					$this->userInputErrors = $this->userModel->createNewUser($_REQUEST['name'], $_REQUEST['email'], $_REQUEST['password']);
 
-					header("Location: /");
-					exit();
+					if(empty($this->userInputErrors)) {
+						header("Location: /");
+						exit();
+					}
 				}
 				else {
 					header("Location: ".$_SERVER['REQUEST_URI']);
@@ -30,4 +33,4 @@
 		}
 	}
 
-	$registrationController = new RegistrationController();
+	$controller = new RegistrationController();

@@ -57,9 +57,9 @@
 		{
 			return $this->protocol.$_SERVER['SERVER_NAME']."/?page=".(isset($_REQUEST['page']) ? $_REQUEST['page'] - 1 : 2);
 		}
-		public function userAllowedToDelete($article)
+		public function userAllowedToDelete($authorUID)
 		{
-			return $this->userModel->isAuthorized() ? $this->userModel->isAdmin() || $this->userModel->getUserID() == $article->authorUID : false;
+			return $this->userModel->isAuthorized() ? $this->userModel->isAdmin() || $this->userModel->getUserID() == $authorUID : false;
 		}
 		public function isAuthorized()
 		{

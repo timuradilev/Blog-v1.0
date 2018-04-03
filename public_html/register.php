@@ -21,17 +21,26 @@
 				<div class="form-group">
 			    	<label for="formGroupInputName">Name</label>
 			    	<input type="text" class="form-control" id="formGroupInputName" placeholder="Name" name="name">
+			    	<?php if(!empty($controller->userInputErrors) && !empty($controller->userInputErrors['name'])): ?>
+			    	<small class="text-danger"><em><?= $controller->userInputErrors["name"];?></em></small>
+			    	<?php endif; ?>
 			  	</div>
 			 	<div class="form-group">
 				    <label for="inputEmail1">Email address</label>
 				    
 				    <input type="email" class="form-control" id="inputEmail1" placeholder="Enter email" name="email">
 				    <small><em>Упрощенная регистрация. Почта не проверяется.</em></small>
+				    <?php if(!empty($controller->userInputErrors) && !empty($controller->userInputErrors['email'])): ?>
+			    	<small class="text-danger"><em><?= $controller->userInputErrors["email"];?></em></small>
+			    	<?php endif; ?>
 			 		<br>
 			  	</div>
 				<div class="form-group">
 					<label for="inputPassword1">Password</label>
 				    <input type="password" class="form-control" id="inputPassword1" placeholder="Password" name="password">
+				    <?php if(!empty($controller->userInputErrors) && !empty($controller->userInputErrors['password'])): ?>
+			    	<small class="text-danger"><em><?= $controller->userInputErrors["password"];?></em></small>
+			    	<?php endif; ?>
 				</div>
 			 	<button type="submit" class="btn btn-primary" name="action" value="register">Submit</button>
 			</form>

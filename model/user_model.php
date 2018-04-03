@@ -23,6 +23,10 @@
 		}
 		public function createNewUser($name, $email, $password)
 		{
+			$userInputErrors = $this->validateNewUserInfo($name, $email, $password);
+			if($userInputErrors != false)
+				return $userInputErrors;
+
 			$users = $this->getUsers();
 
 			usort($users, function($user1, $user2) {
@@ -43,6 +47,8 @@
 
 			$users[] = $newUser;
 			$this->saveUsers($users);
+
+			return $userInputErrors;
 
 		}
 		//returns user with given uid of false
@@ -72,8 +78,13 @@
 			throw new Exception("No such user!");
 		}
 		//returns true if email and password are correct
-		public function login($email, $password)
+		public function login($email, $password, &$userInputErrors)
 		{
+			$userInputErrors = $this->validateLoginInfo($email, $password);
+			if($userInputErrors != false)
+				return false;
+
+
 			$users = $this->getUsers();
 
 			foreach($users as &$user) {
@@ -134,5 +145,49 @@
 			ftruncate($file, 0);
 			fwrite($file, serialize($users));
 			fclose($file);
+		}
+		private function validateNewUserInfo($name, $email, $password)
+		{
+			$userInputErrors = false;
+
+			if(!filter_var($name, FILTER_VALIDATE_REGEXP, [
+				'options' => [
+					'regexp' => "/^[a-zA-Z\d ]{3,15}$/"
+				]]))
+				$userInputErrors["name"] = "invalid user name";
+			if(!filter_var($email, FILTER_VALIDATE_EMAIL))
+				$userInputErrors["email"] = "incorrect email address";
+			if($this->emailExists($email))
+				$userInputErrors['email'] = "email already taken";
+			if(!filter_var($password, FILTER_VALIDATE_REGEXP, [
+				'options' => [
+					'regexp' => "/^[\d\w]{3,20}$/"
+				]]))
+				$userInputErrors['password'] = "incorrect password";
+
+			return $userInputErrors;
+		}
+		private function validateLoginInfo($email, $password)
+		{
+			$userInputErrors = false;
+
+			if(!filter_var($email, FILTER_VALIDATE_EMAIL))
+				$userInputErrors["email"] = "incorrect email address";
+			if(!filter_var($password, FILTER_VALIDATE_REGEXP, [
+				'options' => [
+					'regexp' => "/^[\d\w]{3,20}$/"
+				]]))
+				$userInputErrors['password'] = "incorrect password";
+
+			return $userInputErrors;
+		}
+		private function emailExists($email)
+		{
+			$users = $this->getUsers();
+			foreach($users as $user)
+				if($user->getEmail() == $email)
+					return true;
+
+			return false;
 		}
 	}
