@@ -25,14 +25,16 @@
 	<form action="newarticle.php" method="POST">
   		<div class="form-group">
     		<label for="ArticleNameInput">Заголовок</label>
-    		<input type="text" class="form-control" id="ArticleNameInput" placeholder="Название статьи" name="title" required>
+    		<input type="text" class="form-control" id="ArticleNameInput" placeholder="Название статьи" name="title" 
+    			value="<?=!empty($controller->userInputErrors)? htmlspecialchars($_REQUEST['title'],ENT_QUOTES):"";?>" 
+    		required>
     		<?php if(!empty($controller->userInputErrors) && !empty($controller->userInputErrors['title'])): ?>
     			<small class="text-danger"><em><?=$controller->userInputErrors['title'];?></em></small>
     		<?php endif; ?>
   		</div>
   		<div class="form-group">
     		<label for="TextInput">Текст</label>
-    		<textarea class="form-control" id="TextInput" rows="15" name="content" required></textarea>
+    		<textarea class="form-control" id="TextInput" rows="15" name="content" required><?=!empty($controller->userInputErrors)? htmlspecialchars($_REQUEST['content'],ENT_QUOTES):"";?></textarea>
     		<?php if(!empty($controller->userInputErrors) && !empty($controller->userInputErrors['content'])): ?>
     			<small class="text-danger"><em><?=$controller->userInputErrors['content'];?></em></small>
     		<?php endif; ?>

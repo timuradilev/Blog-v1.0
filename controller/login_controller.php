@@ -24,7 +24,7 @@
 					exit();
 				}
 			} elseif(isset($_REQUEST['action']) && $_REQUEST['action'] === "login") {
-				if($this->userModel->login($_REQUEST['email'], $_REQUEST['password'], $this->userInputErrors)) {
+				if(!($this->userInputErrors = $this->userModel->login($_REQUEST['email'], $_REQUEST['password']))) {
 					//redirect to the main page
 					header("Location: /");
 					exit();

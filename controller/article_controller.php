@@ -25,7 +25,7 @@
 		}
 		public function userAllowedToDelete()
 		{
-			return $this->userModel->isAdmin() || $this->userModel->getUserID() == $this->article->getAuthorUID();
+			return $this->userModel->isAdmin() || $this->userModel->getUserID() == $this->article->authorUID;
 		}
 		public function getUserName()
 		{

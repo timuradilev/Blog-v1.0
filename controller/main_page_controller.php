@@ -5,6 +5,10 @@
 
 	class MainPageController
 	{
+		public $articles;
+		public $currentPage;
+		public $numberOfPages;
+		public $numOfEntries = 4;
 		private $model;
 		private $userModel;
 		private $protocol = "http://";
@@ -13,34 +17,21 @@
 		{
 			$this->model = new Model("TextFiles", "../data/articlestextfiles");
 			$this->userModel = new UserModel();
-		}
-		//get data for the page
-		public function getPage($numOfEntries)
-		{
+
 			//if no the 'page' parameter, get the first page
 			if(!isset($_REQUEST['page']) || $_REQUEST['page'] >= 1) {
 				//calculate the entry number that will be the first entry on the page
-				$offset = $numOfEntries * (($_REQUEST['page'] ?? 1) - 1);
-				$articles = $this->model->getNArticles($offset, $numOfEntries);
-				return $articles;
+				$offset = $this->numOfEntries * (($_REQUEST['page'] ?? 1) - 1);
+				$this->articles = $this->model->getNArticles($offset, $this->numOfEntries);
+
+				$this->currentPage = $_REQUEST['page'] ?? 1;
+				$this->numberOfPages =ceil((double)$this->model->getNumberOfArticles() / $this->numOfEntries);
+				 
+				
 			} else {
 				//Page number error
 				header("Location: 404.php");
 			}
-		}
-		public function getCurrentPageNumber()
-		{
-			if(isset($_REQUEST['page']) )
-				return $_REQUEST['page'];
-			else
-				return 1;
-		}
-
-		public function getNumberOfPages($numOfEntries) : int
-		{
-			$totalNumberOfEntries = $this->model->getNumberOfArticles();
-			//на каждой странице будет по три статьи
-			return ceil((double)$totalNumberOfEntries / $numOfEntries);
 		}
 
 		public function makePageUrl($pageNumber) : string

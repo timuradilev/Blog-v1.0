@@ -16,28 +16,41 @@
 <body>
 <div class="container">
 	<div class="row">
-		<div class="col-md-4 offset-md-4">
+		<div class="col-sm-4 offset-sm-4">
 			<form method="post" action="register.php">
 				<div class="form-group">
-			    	<label for="formGroupInputName">Name</label>
-			    	<input type="text" class="form-control" id="formGroupInputName" placeholder="Name" name="name">
+			    	<label for="formGroupInputName">Имя</label>
+			    	<div class="input-group">
+				    	<div class="input-group-prepend">
+	      					<div class="input-group-text"><i class="far fa-user"></i></div>
+	    				</div>
+			    		<input type="text" class="form-control" id="formGroupInputName" placeholder="" name="name" required value="<?=!empty($controller->userInputErrors)? htmlspecialchars($_REQUEST['name'], ENT_QUOTES):"";?>">
+			    	</div>
 			    	<?php if(!empty($controller->userInputErrors) && !empty($controller->userInputErrors['name'])): ?>
 			    	<small class="text-danger"><em><?= $controller->userInputErrors["name"];?></em></small>
 			    	<?php endif; ?>
 			  	</div>
 			 	<div class="form-group">
-				    <label for="inputEmail1">Email address</label>
-				    
-				    <input type="email" class="form-control" id="inputEmail1" placeholder="Enter email" name="email">
-				    <small><em>Упрощенная регистрация. Почта не проверяется.</em></small>
+				    <label for="inputEmail1">E-mail</label>
+				    <div class="input-group">
+				    	<div class="input-group-prepend">
+	      					<div class="input-group-text"><i class="far fa-envelope"></i></div>
+	    				</div>
+				    	<input type="email" class="form-control" id="inputEmail1" placeholder="" name="email" required value="<?=!empty($controller->userInputErrors)? htmlspecialchars($_REQUEST['email'], ENT_QUOTES):"";?>">
+				    	<small><em>Упрощенная регистрация. Почта не проверяется на принадлежность вам.</em></small>
+				    </div>
 				    <?php if(!empty($controller->userInputErrors) && !empty($controller->userInputErrors['email'])): ?>
 			    	<small class="text-danger"><em><?= $controller->userInputErrors["email"];?></em></small>
 			    	<?php endif; ?>
-			 		<br>
 			  	</div>
 				<div class="form-group">
-					<label for="inputPassword1">Password</label>
-				    <input type="password" class="form-control" id="inputPassword1" placeholder="Password" name="password">
+					<label for="inputPassword1">Пароль</label>
+					<div class="input-group">
+				    	<div class="input-group-prepend">
+	      					<div class="input-group-text"><i class="fas fa-unlock"></i></div>
+	    				</div>
+				    	<input type="password" class="form-control" id="inputPassword1" placeholder="" name="password" required>
+				    </div>
 				    <?php if(!empty($controller->userInputErrors) && !empty($controller->userInputErrors['password'])): ?>
 			    	<small class="text-danger"><em><?= $controller->userInputErrors["password"];?></em></small>
 			    	<?php endif; ?>

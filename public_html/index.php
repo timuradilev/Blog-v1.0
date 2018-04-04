@@ -6,19 +6,6 @@
 
 	//get the main page controller
 	require_once "../controller/main_page_controller.php";
-	//get data (3 is number of articles)
-	$articles = $controller->getPage(3);
-	//get the total number of pages
-	$numberOfPages = $controller->getNumberOfPages(3);
-	//get the current page
-	$currentPage = $controller->getCurrentPageNumber();
-	// TESTING below
-	//$model = new Model("TextFiles", "/var/www/timur.com/data/articlestextfiles");
-	//$model->deleteArticle(13);
-
-	//$article = new Article(0, "name7", "content7", "author7");
-	//$controller = new Controller();
-	//$controller->addNewArticle("name8", "author8", "content8");
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -33,7 +20,7 @@
 	<!--
 		output articles
 	-->
-	<?php foreach($articles as $art) { ?>
+	<?php foreach($controller->articles as $art) { ?>
 	<h4><a class="article_title_link" href="article.php?id=<?=$art->id; ?>"><?=$art->title?></a></h4>
 	<em class="text-secondary"><?=$art->id?></em>
 	<!-- 

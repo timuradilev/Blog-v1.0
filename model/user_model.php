@@ -78,11 +78,11 @@
 			throw new Exception("No such user!");
 		}
 		//returns true if email and password are correct
-		public function login($email, $password, &$userInputErrors)
+		public function login($email, $password)
 		{
 			$userInputErrors = $this->validateLoginInfo($email, $password);
 			if($userInputErrors != false)
-				return false;
+				return $userInputErrors;
 
 
 			$users = $this->getUsers();
@@ -104,10 +104,11 @@
 						//save user's data
 						$this->updateUser($user);
 
-						return true;
+						return $userInputErrors; // has to be false
 					}
 			}
-			return false;
+			$userInputErrors["wrongUserOrPassword"] = "Неправильный пользователь или пароль"; 
+			return $userInputErrors;
 		}
 		public function logout()
 		{
@@ -154,30 +155,31 @@
 				'options' => [
 					'regexp' => "/^[a-zA-Z\d ]{3,15}$/"
 				]]))
-				$userInputErrors["name"] = "invalid user name";
+				$userInputErrors["name"] = "Некорректное имя";
 			if(!filter_var($email, FILTER_VALIDATE_EMAIL))
-				$userInputErrors["email"] = "incorrect email address";
+				$userInputErrors["email"] = "Некорректный адрес почты";
 			if($this->emailExists($email))
-				$userInputErrors['email'] = "email already taken";
+				$userInputErrors['email'] = "Пользователь с такой почтой уже существует";
 			if(!filter_var($password, FILTER_VALIDATE_REGEXP, [
 				'options' => [
 					'regexp' => "/^[\d\w]{3,20}$/"
 				]]))
-				$userInputErrors['password'] = "incorrect password";
+				$userInputErrors['password'] = "Некорретный пароль";
 
 			return $userInputErrors;
 		}
 		private function validateLoginInfo($email, $password)
 		{
 			$userInputErrors = false;
+			$errorMessage = "Неправильный пользователь или пароль";
 
 			if(!filter_var($email, FILTER_VALIDATE_EMAIL))
-				$userInputErrors["email"] = "incorrect email address";
+				$userInputErrors["wrongUserOrPassword"] = $errorMessage;
 			if(!filter_var($password, FILTER_VALIDATE_REGEXP, [
 				'options' => [
 					'regexp' => "/^[\d\w]{3,20}$/"
 				]]))
-				$userInputErrors['password'] = "incorrect password";
+				$userInputErrors["wrongUserOrPassword"] = $errorMessage;
 
 			return $userInputErrors;
 		}
