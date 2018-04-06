@@ -1,7 +1,17 @@
 <?php
-	require_once "modelTextFiles.php";
-	require_once "../classes/article.php";
-	class Model
+	require_once "article_model_text_files.php";
+	require_once "article_model_database.php";
+
+	//return a object of ArticleModelTextFiles or ... classes
+	//the purpose of this function to choose ArticleModel* class, the site is working with, only in one place 
+	function getArticleModelInstance()
+	{
+		//return new ArticleModelTextFiles("../data/articlestextfiles");
+		return new ArticleModelDatabase();
+	}
+
+
+	/*class Model
 	{
 		private $modelProxy;
 		public function __construct($modelType = "DB", $path)
@@ -22,10 +32,6 @@
 				default:
 					throw new Exception("Model switch error!");
 			}
-		}
-		public function getLastArticles(int $number)
-		{
-			return $this->modelProxy->getLastArticles($number);
 		}
 		public function getNArticles($offset, $number)
 		{
@@ -51,14 +57,5 @@
 		{
 			return $this->modelProxy->deleteArticle($id);
 		}
-		/*
-		public function getNFromUpperIdToLower($highestId, $number)
-		{
-			return $this->modelProxy->getNFromUpperIdToLower($highestId, $number);
-		}
-		public function getNFromLowerIdToUpper($lowerId, $number)
-		{
-			return $this->modelProxy->getNFromLowerIdToUpper($lowerId, $number);
-		}
-		*/
 	}
+	*/

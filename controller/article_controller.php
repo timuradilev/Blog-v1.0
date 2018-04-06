@@ -9,7 +9,7 @@
 		private $article;
 		public function __construct()
 		{
-			$this->model = new Model("TextFiles", "../data/articlestextfiles");
+			$this->model = getArticleModelInstance();
 			$this->userModel = new UserModel();
 			$this->article = $this->model->getArticle($_REQUEST['id']);
 			if($this->userModel->isAuthorized() && isset($_REQUEST['action']) && $_REQUEST['action'] === "delete") {

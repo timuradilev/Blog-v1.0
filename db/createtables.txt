@@ -1,0 +1,17 @@
+create table users (
+    id INT NOT NULL AUTO_INCREMENT,
+    name TINYTEXT NOT NULL,
+    email TINYTEXT NOT NULL,
+    role ENUM('user', 'admin') NOT NULL default 'user',
+    sid TINYTEXT,
+    lastauthdate DATETIME default null,
+    password TINYTEXT NOT NULL,
+    PRIMARY KEY(id) );
+
+create table articles (
+    id INT NOT NULL AUTO_INCREMENT,
+    title TINYTEXT NOT NULL,
+    creationdate DATETIME NOT NULL,
+    authoruid INT NOT NULL,
+    content TEXT NOT NULL,
+    PRIMARY KEY(id) );

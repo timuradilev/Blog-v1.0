@@ -12,7 +12,7 @@
 		//preps and actions
 		public function __construct()
 		{
-			$this->model = new Model("TextFiles", "../data/articlestextfiles");
+			$this->model = getArticleModelInstance();
 			$this->userModel = new UserModel();
 
 			if(!$this->userModel->isAuthorized()) {
