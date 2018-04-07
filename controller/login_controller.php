@@ -1,6 +1,6 @@
 <?php
 	//first, check whether user is authorized
-	require_once "../model/user_model.php";
+	require_once "../model/model.php";
 	require_once "../classes/user.php";
 
 	class LoginController
@@ -9,7 +9,7 @@
 		private $userModel;
 		public function __construct()
 		{
-			$this->userModel = new UserModel();
+			$this->userModel = getUserModelInstance();
 			if($this->userModel->isAuthorized()) { // if user or admin
 				if(isset($_REQUEST['action']) && $_REQUEST['action'] === "logout") {
 					$this->userModel->logout();

@@ -13,7 +13,7 @@
 		protected $sid;
 		protected $lastAuthDate;
 
-		public function __construct($name, $email, $role, $hashedPassword, $uid, $sid)
+		public function __construct($name, $email, $role, $hashedPassword, $uid, $sid, $lastAuthDate = null)
 		{
 			$this->name = $name;
 			$this->email = $email;
@@ -63,5 +63,9 @@
 		public function setNewAuthDate()
 		{
 			$this->lastAuthDate = time();
+		}
+		public function getLastAuthDate()
+		{
+			return $this->lastAuthDate;
 		}
 	}

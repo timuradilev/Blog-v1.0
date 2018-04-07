@@ -1,7 +1,6 @@
 <?php
 	require_once "../model/model.php";
 	require_once "../classes/article.php";
-	require_once "../model/user_model.php";
 
 	class MainPageController
 	{
@@ -17,7 +16,7 @@
 		{
 			try {
 				$this->model = getArticleModelInstance();
-				$this->userModel = new UserModel();
+				$this->userModel = getUserModelInstance();
 
 				//if no the 'page' parameter, get the first page
 				if(!isset($_REQUEST['page']) || $_REQUEST['page'] >= 1) {

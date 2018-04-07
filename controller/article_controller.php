@@ -1,6 +1,5 @@
 <?php
 	require_once "../model/model.php";
-	require_once "../model/user_model.php";
 
 	class ArticleController
 	{
@@ -10,8 +9,12 @@
 		public function __construct()
 		{
 			$this->model = getArticleModelInstance();
-			$this->userModel = new UserModel();
+			$this->userModel = getUserModelInstance();
 			$this->article = $this->model->getArticle($_REQUEST['id']);
+			if(false == $this->article) {
+				include "../public_html/404.php";
+				exit();
+			}
 			if($this->userModel->isAuthorized() && isset($_REQUEST['action']) && $_REQUEST['action'] === "delete") {
 				$this->model->deleteArticle($_REQUEST['id']);
 

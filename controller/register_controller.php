@@ -1,5 +1,5 @@
 <?php
-	require_once "../model/user_model.php";
+	require_once "../model/model.php";
 	require_once "../classes/user.php";
 
 	class RegistrationController
@@ -8,7 +8,7 @@
 		private $userModel;
 		public function __construct()
 		{
-			$this->userModel = new UserModel();
+			$this->userModel = getUserModelInstance();
 			if($this->userModel->isAuthorized()) {
 				//redirect to the main page
 				header("Location: /");

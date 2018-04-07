@@ -1,7 +1,7 @@
 <?php
 	require_once "article_model.php";
 	require_once "../classes/article.php";
-	require_once "user_model.php";
+	require_once "model.php";
 	
 	class ArticleModelTextFiles extends ArticleModel
 	{
@@ -33,7 +33,7 @@
 					$articleContent = file_get_contents("{$this->path}/$curId", false, null, ftell($file));
 					fclose($file);
 
-					$user = (new UserModel())->getUserByID($articleAuthorUID);
+					$user = (getUserModelInstance())->getUserByID($articleAuthorUID);
 
 					$articles[] = new Article($curId, $articleName, $articleContent, $articleAuthorUID, $user->getUserName(),$articleCreationDate);
 				}
@@ -52,7 +52,7 @@
 				$articleContent = file_get_contents("{$this->path}/$id", false, null, ftell($file));
 				fclose($file);
 
-				$user = (new UserModel())->getUserByID($articleAuthorUID);
+				$user = (getUserModelInstance())->getUserByID($articleAuthorUID);
 
 				return new Article($id, $articleName, $articleContent, $articleAuthorUID, $user->getUserName(), $articleCreationDate);
 			}
@@ -66,7 +66,7 @@
 				return $userInputErrors;
 			$content = htmlspecialchars($content, ENT_QUOTES);
 
-			$userModel = new UserModel();
+			$userModel = getUserModelInstance();
 			//новый id
 			$id = $this->getLastId() + 1;
 			$uid = $userModel->getUserID();

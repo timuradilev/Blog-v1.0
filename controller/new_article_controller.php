@@ -1,7 +1,6 @@
 <?php
 	require_once "../classes/article.php";
 	require_once "../model/model.php";
-	require_once "../model/user_model.php";
 
 	class NewArticleController
 	{
@@ -13,7 +12,7 @@
 		public function __construct()
 		{
 			$this->model = getArticleModelInstance();
-			$this->userModel = new UserModel();
+			$this->userModel = getUserModelInstance();
 
 			if(!$this->userModel->isAuthorized()) {
 				header("Location: /");
