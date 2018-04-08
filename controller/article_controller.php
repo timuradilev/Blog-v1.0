@@ -3,9 +3,9 @@
 
 	class ArticleController
 	{
+		public $article;
 		private $model;
 		private $userModel;
-		private $article;
 		public function __construct()
 		{
 			$this->model = getArticleModelInstance();
@@ -22,10 +22,6 @@
 				exit();
 			}
 		}
-		public function getArticle()
-		{
-			return $this->article;
-		}
 		public function userAllowedToDelete()
 		{
 			return $this->userModel->isAdmin() || $this->userModel->getUserID() == $this->article->authorUID;
@@ -41,4 +37,4 @@
 	}
 
 	$controller = new ArticleController();
-	$article = $controller->getArticle();
+	$article = $controller->article;

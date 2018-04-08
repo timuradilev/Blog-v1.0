@@ -5,6 +5,8 @@
 	
 	class ArticleModelTextFiles extends ArticleModel
 	{
+		use ArticleInfoValidation;
+		
 		public $path;
 
 		public function __construct(string $path)
@@ -12,7 +14,7 @@
 			$this->path = $path;
 		}
 		//вернуть $number статей начиная со статьи, имеющей позицию $offset по отношению к самой новой странице(у нее позиция - 0).
-		public function getNArticles($offset, $number)
+		public function getNArticles(int $offset, int $number)
 		{
 			$articles = [];
 			//определить id нужной статьи
@@ -41,7 +43,7 @@
 			return $articles;
 		}
 		//возвращает статью с указанным id
-		public function getArticle($id)
+		public function getArticle(int $id)
 		{
 			if(file_exists("{$this->path}/$id")) {
 				$file = fopen("{$this->path}/$id", "rt");
@@ -95,7 +97,7 @@
 			return $userInputErrors;
 		}
 		//удалить статью
-		public function deleteArticle($id) : bool
+		public function deleteArticle(int $id) : bool
 		{
 			echo "test";
 			//если статья сущ.
@@ -148,19 +150,5 @@
 			fclose($file);
 
 			return (int)$id;
-		}
-		private function validateNewArticleInfo($title, $content)
-		{
-			$errors = false;
-
-			if(!filter_var($title, FILTER_VALIDATE_REGEXP, [
-				'options' => [
-					'regexp' => "/^[\d\w\p{P} ]{5,100}$/"
-				]]))
-				$errors['title'] = "incorrect title";
-			if(strlen($content) > 1000)
-				$errors['content'] = "content is too long";
-
-			return $errors;
 		}
 	}

@@ -24,7 +24,7 @@
 				    	<div class="input-group-prepend">
 	      					<div class="input-group-text"><i class="far fa-envelope"></i></div>
 	    				</div>
-				    	<input type="email" class="form-control" id="inputEmail1" placeholder="" name="email" required value="<?=!empty($controller->userInputErrors)? htmlspecialchars($_REQUEST['email'], ENT_QUOTES):"";?>">
+				    	<input type="email" class="form-control" id="inputEmail1" placeholder="" name="email" autofocus required value="<?=!empty($controller->userInputErrors)? htmlspecialchars($_REQUEST['email'], ENT_QUOTES):"";?>">
 					</div>
 				</div>
 			  	<div class="form-group">
@@ -39,8 +39,10 @@
 			  	</div>
 			  <button type="submit" class="btn btn-primary" name="action" value="login">Submit</button>
 			</form>
+			<?php if(!empty($controller->userInputErrors['wrongUserOrPassword'])): ?>
 			<br>
-			<em class="text-danger"><?=$controller->userInputErrors['wrongUserOrPassword'] ?? ""?></em>
+			<em class="text-danger">Неправильный пользователь или пароль</em>
+			<?php endif; ?>
 		</div>
 	</div>
 </div> <!-- .container -->

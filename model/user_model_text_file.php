@@ -4,6 +4,9 @@
 
 	class UserModelTextFile extends UserModel
 	{
+		use UserInfoValidation;
+		use Authentication;
+
 		private $path = "../data/users/users.data";
 		protected $user; // current user
 
@@ -64,6 +67,16 @@
 			//no such user
 			return false;
 		}
+		protected function getUserByEmail($email)
+		{
+			$users = $this->getUsers();
+
+			foreach($users as $user) {
+				if($email == $user->getEmail())
+					return $user;
+			}
+			return false;
+		}
 		public function updateUser($user)
 		{
 			$users = $this->getUsers();
@@ -78,44 +91,8 @@
 			}
 			throw new Exception("No such user!");
 		}
-		//returns true if email and password are correct
-		public function login($email, $password)
-		{
-			$userInputErrors = $this->validateLoginInfo($email, $password);
-			if($userInputErrors != false)
-				return $userInputErrors;
-
-
-			$users = $this->getUsers();
-
-			foreach($users as &$user) {
-				if($email === $user->getEmail())
-					if(password_verify($password, $user->getHashedPassword())) {
-						//reuse sid
-						session_id($user->getSID());
-						session_start([
-							"name"            => "sid",
-							"cookie_lifetime" => 2678400,
-							"read_and_close"  => true
-						]);
-						$user->setNewAuthDate();
-						//uid
-						setcookie("uid", $user->getUID(), time() + 2678400);
-
-						//save user's data
-						$this->updateUser($user);
-
-						return $userInputErrors; // has to be false
-					}
-			}
-			$userInputErrors["wrongUserOrPassword"] = "Неправильный пользователь или пароль"; 
-			return $userInputErrors;
-		}
-		public function logout()
-		{
-			setcookie("uid", "", time() - 3600);
-			setcookie("sid", "", time() - 3600);	
-		}
+		
+		
 		public function isAuthorized()
 		{
 			return $this->user->getRole() != USERROLE_GUEST;
@@ -147,42 +124,6 @@
 			ftruncate($file, 0);
 			fwrite($file, serialize($users));
 			fclose($file);
-		}
-		protected function validateNewUserInfo($name, $email, $password)
-		{
-			$userInputErrors = false;
-
-			if(!filter_var($name, FILTER_VALIDATE_REGEXP, [
-				'options' => [
-					'regexp' => "/^[a-zA-Z\d ]{3,15}$/"
-				]]))
-				$userInputErrors["name"] = "Некорректное имя";
-			if(!filter_var($email, FILTER_VALIDATE_EMAIL))
-				$userInputErrors["email"] = "Некорректный адрес почты";
-			if($this->emailExists($email))
-				$userInputErrors['email'] = "Пользователь с такой почтой уже существует";
-			if(!filter_var($password, FILTER_VALIDATE_REGEXP, [
-				'options' => [
-					'regexp' => "/^[\d\w]{3,20}$/"
-				]]))
-				$userInputErrors['password'] = "Некорретный пароль";
-
-			return $userInputErrors;
-		}
-		protected function validateLoginInfo($email, $password)
-		{
-			$userInputErrors = false;
-			$errorMessage = "Неправильный пользователь или пароль";
-
-			if(!filter_var($email, FILTER_VALIDATE_EMAIL))
-				$userInputErrors["wrongUserOrPassword"] = $errorMessage;
-			if(!filter_var($password, FILTER_VALIDATE_REGEXP, [
-				'options' => [
-					'regexp' => "/^[\d\w]{3,20}$/"
-				]]))
-				$userInputErrors["wrongUserOrPassword"] = $errorMessage;
-
-			return $userInputErrors;
 		}
 		protected function emailExists($email)
 		{

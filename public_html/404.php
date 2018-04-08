@@ -5,7 +5,7 @@
 	<?php include "../views/head_template.html"; ?>
 </head>
 <body>
-	<div class="container">
+<div class="container">
 	<!--
 		Название сайта и ссылка на создание статей
 	-->
@@ -16,8 +16,10 @@
 	</div>
 </div>
 <hr>
-	<div class="h3 text-center mt-5">Страница не найдена</div>
-
+<div class="error404">
+	<h2>Страница не найдена</h2>
+	<a href="/" class="btn btn-light">Вернуться на главную</button>
+</div>
 	<?php include "../views/body_footer_template.html"; ?>
 </body>
 </html>

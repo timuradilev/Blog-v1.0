@@ -4,6 +4,9 @@
 
 	class UserModelDatabase extends UserModel
 	{
+		use UserInfoValidation;
+		use Authentication;
+
 		protected $user; //current user
 		private $database;
 
@@ -84,6 +87,24 @@
 			else
 				return false;
 		}
+		protected function getUserByEmail($email)
+		{
+			//sql
+			$query = 'SELECT id, name, email, role, sid, lastauthdate, password 
+					  FROM users
+					  WHERE email=:email';
+			$stmt = $this->database->prepare($query);
+			$stmt->execute(['email' => $email]);
+
+			if($stmt->rowCount()) {
+				$result = $stmt->fetch();
+				$role = $result['role'] == 'admin' ? USERROLE_ADMIN : ($result['role'] == 'user' ? USERROLE_USER : USERROLE_GUEST);
+				$user = new User($result['name'], $result['email'], $role, $result['password'], $result['id'], $result['sid']);
+				return $user;
+			}
+			else
+				return false;
+		}
 		public function updateUser($user)
 		{
 			//sql
@@ -105,49 +126,6 @@
 			if(!$stmt->rowCount())
 				throw new Exception("Couldn't update user info!");
 		}
-		public function login($email, $password)
-		{
-			$userInputErrors = $this->validateLoginInfo($email, $password);
-			if($userInputErrors != false)
-				return $userInputErrors;
-
-			//sql
-			$query = 'SELECT id, name, email, role, sid, lastauthdate, password 
-					  FROM users
-					  WHERE email=:email';
-			$stmt = $this->database->prepare($query);
-			$stmt->execute(['email' => $email]);
-
-			if($stmt->rowCount()) {
-				$result = $stmt->fetch();
-				if(password_verify($password, $result['password'])) {
-					$role = $result['role'] == 'admin' ? USERROLE_ADMIN : ($result['role'] == 'user' ? USERROLE_USER : USERROLE_GUEST);
-					$user = new User($result['name'], $result['email'], $role, $result['password'], $result['id'], $result['sid']);
-
-					session_id($user->getSID());
-					session_start([
-						"name"            => "sid",
-						"cookie_lifetime" => 2678400,
-						"read_and_close"  => true
-					]);
-
-					//uid
-					setcookie("uid", $user->getUID(), time() + 2678400);
-
-					//save user's data
-					$this->updateUser($user);
-				}
-				else
-					$userInputErrors["wrongUserOrPassword"] = "Неправильный пользователь или пароль"; 
-			}
-				
-			return $userInputErrors;
-		}
-		public function logout()
-		{
-			setcookie("uid", "", time() - 3600);
-			setcookie("sid", "", time() - 3600);	
-		}
 		public function isAuthorized()
 		{
 			return $this->user->getRole() != USERROLE_GUEST;
@@ -163,42 +141,6 @@
 		public function getUserName()
 		{
 			return $this->user->getUserName();
-		}
-		protected function validateNewUserInfo($name, $email, $password)
-		{
-			$userInputErrors = false;
-
-			if(!filter_var($name, FILTER_VALIDATE_REGEXP, [
-				'options' => [
-					'regexp' => "/^[a-zA-Z\d ]{3,15}$/"
-				]]))
-				$userInputErrors["name"] = "Некорректное имя";
-			if(!filter_var($email, FILTER_VALIDATE_EMAIL))
-				$userInputErrors["email"] = "Некорректный адрес почты";
-			if($this->emailExists($email))
-				$userInputErrors['email'] = "Пользователь с такой почтой уже существует";
-			if(!filter_var($password, FILTER_VALIDATE_REGEXP, [
-				'options' => [
-					'regexp' => "/^[\d\w]{3,20}$/"
-				]]))
-				$userInputErrors['password'] = "Некорретный пароль";
-
-			return $userInputErrors;
-		}
-		protected function validateLoginInfo($email, $password)
-		{
-			$userInputErrors = false;
-			$errorMessage = "Неправильный пользователь или пароль";
-
-			if(!filter_var($email, FILTER_VALIDATE_EMAIL))
-				$userInputErrors["wrongUserOrPassword"] = $errorMessage;
-			if(!filter_var($password, FILTER_VALIDATE_REGEXP, [
-				'options' => [
-					'regexp' => "/^[\d\w]{3,20}$/"
-				]]))
-				$userInputErrors["wrongUserOrPassword"] = $errorMessage;
-
-			return $userInputErrors;
 		}
 		protected function emailExists($email)
 		{

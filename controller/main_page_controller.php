@@ -18,19 +18,23 @@
 				$this->model = getArticleModelInstance();
 				$this->userModel = getUserModelInstance();
 
-				//if no the 'page' parameter, get the first page
+				//when no the 'page' parameter, get the first page
 				if(!isset($_REQUEST['page']) || $_REQUEST['page'] >= 1) {
+					$this->currentPage = $_REQUEST['page'] ?? 1;
 					//calculate the entry number that will be the first entry on the page
 					$offset = $this->numOfEntries * (($_REQUEST['page'] ?? 1) - 1);
 					$this->articles = $this->model->getNArticles($offset, $this->numOfEntries);
 
-					$this->currentPage = $_REQUEST['page'] ?? 1;
+					
 					$this->numberOfPages =ceil((double)$this->model->getNumberOfArticles() / $this->numOfEntries);
 					 
-					
+					 if($this->currentPage > $this->numberOfPages) {
+					 	include "../public_html/404.php";
+					 	exit();
+					 }
 				} else {
-					//Page number error
-					header("Location: 404.php");
+					include "../public_html/404.php";
+					exit();
 				}
 			}
 			catch(Exception $ex){

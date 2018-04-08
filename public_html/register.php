@@ -24,10 +24,10 @@
 				    	<div class="input-group-prepend">
 	      					<div class="input-group-text"><i class="far fa-user"></i></div>
 	    				</div>
-			    		<input type="text" class="form-control" id="formGroupInputName" placeholder="" name="name" required value="<?=!empty($controller->userInputErrors)? htmlspecialchars($_REQUEST['name'], ENT_QUOTES):"";?>">
+			    		<input type="text" class="form-control" id="formGroupInputName" placeholder="" name="name" required autofocus autocomplete="off" value="<?=!empty($controller->userInputErrors)? htmlspecialchars($_REQUEST['name'], ENT_QUOTES):"";?>">
 			    	</div>
-			    	<?php if(!empty($controller->userInputErrors) && !empty($controller->userInputErrors['name'])): ?>
-			    	<small class="text-danger"><em><?= $controller->userInputErrors["name"];?></em></small>
+			    	<?php if(!empty($controller->userInputErrors['name'])): ?>
+			    	<small class="text-danger"><em>Некорректное имя</em></small>
 			    	<?php endif; ?>
 			  	</div>
 			 	<div class="form-group">
@@ -36,11 +36,13 @@
 				    	<div class="input-group-prepend">
 	      					<div class="input-group-text"><i class="far fa-envelope"></i></div>
 	    				</div>
-				    	<input type="email" class="form-control" id="inputEmail1" placeholder="" name="email" required value="<?=!empty($controller->userInputErrors)? htmlspecialchars($_REQUEST['email'], ENT_QUOTES):"";?>">
+				    	<input type="email" class="form-control" id="inputEmail1" placeholder="" name="email" autocomplete="off" required value="<?=!empty($controller->userInputErrors)? htmlspecialchars($_REQUEST['email'], ENT_QUOTES):"";?>">
 				    	<small><em>Упрощенная регистрация. Почта не проверяется на принадлежность вам.</em></small>
 				    </div>
-				    <?php if(!empty($controller->userInputErrors) && !empty($controller->userInputErrors['email'])): ?>
-			    	<small class="text-danger"><em><?= $controller->userInputErrors["email"];?></em></small>
+				    <?php if(!empty($controller->userInputErrors['email'])): ?>
+			    	<small class="text-danger"><em><Некорректный адрес почты</em></small>
+			    	<?php elseif(!empty($controller->userInputErrors) && !empty($controller->userInputErrors['emailExists'])): ?>
+			    	<small class="text-danger"><em>Пользователь с такой почтой уже существует</em></small>
 			    	<?php endif; ?>
 			  	</div>
 				<div class="form-group">
@@ -49,10 +51,10 @@
 				    	<div class="input-group-prepend">
 	      					<div class="input-group-text"><i class="fas fa-unlock"></i></div>
 	    				</div>
-				    	<input type="password" class="form-control" id="inputPassword1" placeholder="" name="password" required>
+				    	<input type="password" class="form-control" id="inputPassword1" placeholder="" name="password" autocomplete="off" required>
 				    </div>
-				    <?php if(!empty($controller->userInputErrors) && !empty($controller->userInputErrors['password'])): ?>
-			    	<small class="text-danger"><em><?= $controller->userInputErrors["password"];?></em></small>
+				    <?php if(!empty($controller->userInputErrors['password'])): ?>
+			    	<small class="text-danger"><em>Некорретный пароль</em></small>
 			    	<?php endif; ?>
 				</div>
 			 	<button type="submit" class="btn btn-primary" name="action" value="register">Submit</button>

@@ -5,6 +5,8 @@
 
 	class ArticleModelDatabase extends ArticleModel
 	{
+		use ArticleInfoValidation;
+		
 		private $database;
 
 		public function __construct()
@@ -17,7 +19,7 @@
 			);
 		}
 		//вернуть $number статей начиная со статьи, имеющей позицию $offset по отношению к самой новой странице(у нее позиция - 0).
-		public function getNArticles($offset, $number)
+		public function getNArticles(int $offset, int $number)
 		{
 			$articles = [];
 			
@@ -40,7 +42,7 @@
 			return $articles;
 		}
 		//возвращает статью с указанным id
-		public function getArticle($id)
+		public function getArticle(int $id)
 		{
 			//sql
 			$query = 'SELECT id, title, creationdate, authoruid, content
@@ -83,7 +85,7 @@
 			return $userInputErrors;
 		}
 		//удалить статью
-		public function deleteArticle($id)
+		public function deleteArticle(int $id)
 		{
 			//sql
 			$query = 'DELETE FROM articles WHERE id = :id';
@@ -103,19 +105,5 @@
 
 			//fetch data
 			return $stmt->fetch()['count'];
-		}
-		private function validateNewArticleInfo($title, $content)
-		{
-			$errors = false;
-
-			if(!filter_var($title, FILTER_VALIDATE_REGEXP, [
-				'options' => [
-					'regexp' => "/^[\d\w\p{P} ]{5,100}$/"
-				]]))
-				$errors['title'] = "incorrect title";
-			if(strlen($content) > 1000)
-				$errors['content'] = "content is too long";
-
-			return $errors;
 		}
 	}
