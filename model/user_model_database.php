@@ -34,7 +34,7 @@
 			$this->user = User::getGuestUser();
 		}
 		// creates new user, saves to database and login user
-		public function createNewUser($name, $email, $password)
+		public function createNewUser(string $name, string $email, string $password)
 		{
 			$userInputErrors = $this->validateNewUserInfo($name, $email, $password);
 			if($userInputErrors != false)
@@ -68,7 +68,7 @@
 
 			return $userInputErrors;
 		}
-		public function getUserByID($uid)
+		public function getUserByID(int $uid)
 		{
 			//sql
 			$query = 'SELECT id, name, email, role, sid, lastauthdate, password
@@ -87,7 +87,7 @@
 			else
 				return false;
 		}
-		protected function getUserByEmail($email)
+		protected function getUserByEmail(string $email)
 		{
 			//sql
 			$query = 'SELECT id, name, email, role, sid, lastauthdate, password 
@@ -105,7 +105,7 @@
 			else
 				return false;
 		}
-		public function updateUser($user)
+		protected function updateUser($user)
 		{
 			//sql
 			$query = 'UPDATE users SET name=:name, email=:email, role=:role,
@@ -142,7 +142,7 @@
 		{
 			return $this->user->getUserName();
 		}
-		protected function emailExists($email)
+		protected function emailExists(string $email)
 		{
 			$query = 'SELECT id FROM users WHERE email=:email';
 			$stmt = $this->database->prepare($query);

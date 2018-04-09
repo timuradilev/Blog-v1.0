@@ -36,7 +36,7 @@
     		<label for="TextInput">Текст</label>
     		<textarea class="form-control" id="TextInput" rows="15" name="content" required><?=!empty($controller->userInputErrors)? htmlspecialchars($_REQUEST['content'],ENT_QUOTES):"";?></textarea>
     		<?php if(!empty($controller->userInputErrors['content'])): ?>
-    			<small class="text-danger"><em>Текст слишком длинный</em></small>
+    			<small class="text-danger"><em>Текст слишком короткий или длинный</em></small>
     		<?php endif; ?>
   		</div>
   		<button type="submit" class="btn btn-success" name="action" value="newarticle">Опубликовать</button>

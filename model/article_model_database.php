@@ -62,7 +62,7 @@
 				return false;
 		}
 		//сохранить новую статью
-		public function saveNewArticle($title, $content)
+		public function saveNewArticle(string $title, string $content)
 		{
 			//validate and encode
 			$userInputErrors = $this->validateNewArticleInfo($title, $content);
@@ -87,14 +87,31 @@
 		//удалить статью
 		public function deleteArticle(int $id)
 		{
-			//sql
-			$query = 'DELETE FROM articles WHERE id = :id';
+			//get authorUID from DB
+			$query = 'SELECT authoruid FROM articles
+					  WHERE id = :id';
 			$stmt = $this->database->prepare($query);
 			$stmt->bindValue(':id', $id, PDO::PARAM_INT);
 			$stmt->execute();
 
-			return (bool)$stmt->rowCount();
+			if($stmt->rowCount()) {
+				$result = $stmt->fetch();
+				$authorUID = (int)$result['authoruid'];
 
+				$userModel = getUserModelInstance();
+				$uid = $userModel->getUserID();
+
+				//ensure that auhor and current user is the same person
+				if($authorUID == $uid || $userModel->isAdmin()) {
+					$query = 'DELETE FROM articles WHERE id = :id';
+					$stmt = $this->database->prepare($query);
+					$stmt->bindValue(':id', $id, PDO::PARAM_INT);
+					$stmt->execute();
+
+					return (bool)$stmt->rowCount();
+				}
+			}
+			return false;
 		}
 		//вернуть общее количество существующих статей
 		public function getNumberOfArticles() : int

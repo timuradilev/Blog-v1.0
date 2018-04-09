@@ -18,20 +18,13 @@
 				$this->model = getArticleModelInstance();
 				$this->userModel = getUserModelInstance();
 
+				$this->currentPage = isset($_REQUEST['page']) ? (int)$_REQUEST['page'] : 1;
+				$this->numberOfPages =ceil((double)$this->model->getNumberOfArticles() / $this->numOfEntries);
 				//when no the 'page' parameter, get the first page
-				if(!isset($_REQUEST['page']) || $_REQUEST['page'] >= 1) {
-					$this->currentPage = $_REQUEST['page'] ?? 1;
+				if($this->currentPage >= 1 && $this->numberOfPages >= $this->currentPage) {
 					//calculate the entry number that will be the first entry on the page
-					$offset = $this->numOfEntries * (($_REQUEST['page'] ?? 1) - 1);
+					$offset = $this->numOfEntries * ($this->currentPage - 1);
 					$this->articles = $this->model->getNArticles($offset, $this->numOfEntries);
-
-					
-					$this->numberOfPages =ceil((double)$this->model->getNumberOfArticles() / $this->numOfEntries);
-					 
-					 if($this->currentPage > $this->numberOfPages) {
-					 	include "../public_html/404.php";
-					 	exit();
-					 }
 				} else {
 					include "../public_html/404.php";
 					exit();
@@ -50,12 +43,12 @@
 
 		public function makeNextPageUrl() : string
 		{
-			return $this->protocol.$_SERVER['SERVER_NAME']."/?page=".(isset($_REQUEST['page']) ? $_REQUEST['page'] + 1 : 2);
+			return $this->protocol.$_SERVER['SERVER_NAME']."/?page=".($this->currentPage + 1);
 		}
 
 		public function makePrevPageUrl() : string
 		{
-			return $this->protocol.$_SERVER['SERVER_NAME']."/?page=".(isset($_REQUEST['page']) ? $_REQUEST['page'] - 1 : 2);
+			return $this->protocol.$_SERVER['SERVER_NAME']."/?page=".($this->currentPage - 1);
 		}
 		public function userAllowedToDelete($authorUID)
 		{

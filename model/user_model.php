@@ -3,23 +3,23 @@
 	{
 		protected $user; //current user
 
-		abstract public function createNewUser($name, $email, $password);
-		abstract public function getUserByID($id);
-		abstract public function updateUser($user);
-		abstract public function login($email, $password);
+		abstract public function createNewUser(string $name, string $email, string $password);
+		abstract public function getUserByID(int $id);
+		abstract public function login(string $email, string $password);
 		abstract public function logout();
 		abstract public function isAuthorized();
 		abstract public function isAdmin();
 		abstract public function getUserID();
 		abstract public function getUserName();
-		abstract protected function emailExists($email);
-		abstract protected function getUserByEmail($email);
+		abstract protected function updateUser($user);
+		abstract protected function emailExists(string $email);
+		abstract protected function getUserByEmail(string $email);
 	}
 
 	trait Authentication
 	{
 		//returns true if email and password are correct
-		public function login($email, $password)
+		public function login(string $email, string $password)
 		{
 			$userInputErrors = $this->validateLoginInfo($email, $password);
 			if($userInputErrors != false)
@@ -57,7 +57,7 @@
 
 	trait UserInfoValidation
 	{
-		protected function validateNewUserInfo($name, $email, $password)
+		protected function validateNewUserInfo(string $name, string $email, string $password)
 		{
 			$userInputErrors = false;
 
@@ -72,13 +72,13 @@
 				$userInputErrors['emailExists'] = true;
 			if(!filter_var($password, FILTER_VALIDATE_REGEXP, [
 				'options' => [
-					'regexp' => "/^[\d\w]{3,20}$/"
+					'regexp' => "/^[\d\w]{5,20}$/"
 				]]))
 				$userInputErrors['password'] = true;
 
 			return $userInputErrors;
 		}
-		protected function validateLoginInfo($email, $password)
+		protected function validateLoginInfo(string $email, string $password)
 		{
 			$userInputErrors = false;
 

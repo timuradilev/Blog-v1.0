@@ -10,15 +10,27 @@
 		{
 			$this->model = getArticleModelInstance();
 			$this->userModel = getUserModelInstance();
-			$this->article = $this->model->getArticle($_REQUEST['id']);
-			if(false == $this->article) {
-				include "../public_html/404.php";
-				exit();
-			}
-			if($this->userModel->isAuthorized() && isset($_REQUEST['action']) && $_REQUEST['action'] === "delete") {
-				$this->model->deleteArticle($_REQUEST['id']);
 
-				header("Location: /");
+			if(isset($_REQUEST['id'])) {
+				$articleId = (int)$_REQUEST['id'];
+
+				if($this->userModel->isAuthorized() && isset($_REQUEST['action']) && $_REQUEST['action'] === "delete") {
+					if($this->model->deleteArticle($articleId)) {
+						header("Location: /");
+						exit();
+					} else {
+						include "../public_html/servererror.php";
+						exit();
+					}
+				}
+
+				$this->article = $this->model->getArticle($articleId);
+				if(false == $this->article) {
+					include "../public_html/404.php";
+					exit();
+				}
+			} else {
+				include "../public_html/404.php";
 				exit();
 			}
 		}

@@ -58,9 +58,11 @@
 
 				return new Article($id, $articleName, $articleContent, $articleAuthorUID, $user->getUserName(), $articleCreationDate);
 			}
+			else
+				return false;
 		}
 		//сохранить новую статью
-		public function saveNewArticle($title, $content)
+		public function saveNewArticle(string $title, string $content)
 		{
 			//validate and encode
 			$userInputErrors = $this->validateNewArticleInfo($title, $content);
@@ -99,29 +101,35 @@
 		//удалить статью
 		public function deleteArticle(int $id) : bool
 		{
-			echo "test";
+			$article = $this->getArticle($id);
 			//если статья сущ.
-			if(file_exists("{$this->path}/$id")) {
-				//если статья является самой новой и ее ИД хранится в файле lastid.data
-				if($id == ($lastId = $this->getLastId())) {
-					//узнать ид предыдущей по номеру ид статьи
-					for(--$lastId; $lastId && !file_exists("{$this->path}/$lastId"); --$lastId);
+			if(false != $article) {
+				$userModel = getUserModelInstance();
+				$uid = $userModel->getUserID();
 
-					//записать новый lastid
-					$file = fopen("{$this->path}/lastid.data", "r+t");
+				if($article->authorUID == $uid) {
+					//если статья является самой новой и ее ИД хранится в файле lastid.data
+					if($id == ($lastId = $this->getLastId())) {
+						//узнать ид предыдущей по номеру ид статьи
+						for(--$lastId; $lastId && !file_exists("{$this->path}/$lastId"); --$lastId);
+
+						//записать новый lastid
+						$file = fopen("{$this->path}/lastid.data", "r+t");
+						flock($file, LOCK_EX);
+						ftruncate($file, 0);
+						fwrite($file, $lastId);
+						fclose($file);
+					}
+					//delete article
+					$file = fopen("{$this->path}/$id", "r");
 					flock($file, LOCK_EX);
-					ftruncate($file, 0);
-					fwrite($file, $lastId);
+					unlink("{$this->path}/$id");
 					fclose($file);
+					
+					return true;
 				}
-				$file = fopen("{$this->path}/$id", "r");
-				flock($file, LOCK_EX);
-				unlink("{$this->path}/$id");
-				fclose($file);
-				return true;
-			} else {
-				return false;
 			}
+			return false;
 		}
 		//вернуть общее количество существующих статей
 		public function getNumberOfArticles() : int

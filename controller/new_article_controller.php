@@ -20,10 +20,10 @@
 			}
 
 			//actions
-			if(isset($_REQUEST['action']) && $_REQUEST['action'] === "newarticle") {
+			if(isset($_REQUEST['action']) && $_REQUEST['action'] === "newarticle" && !empty($_REQUEST['title']) && !empty($_REQUEST['content'])) {
 				$this->userInputErrors = $this->model->saveNewArticle($_REQUEST['title'], $_REQUEST['content']);
 
-				if(!$this->userInputErrors) {
+				if(empty($this->userInputErrors)) {
 					header("Location: /");
 					exit();
 				}
@@ -35,7 +35,10 @@
 				$title = $loremIpsum[0];
 				$content = $loremIpsum[2];
 
-				$this->model->saveNewArticle($title, $content);
+				if(!empty($this->userInputErrors = $this->model->saveNewArticle($title, $content))) {
+					include "../public_html/servererror.php";
+					exit();
+				}
 
 				header("Location: /");
 				exit();

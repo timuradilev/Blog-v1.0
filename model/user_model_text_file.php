@@ -25,7 +25,7 @@
 			}
 			$this->user = User::getGuestUser();
 		}
-		public function createNewUser($name, $email, $password)
+		public function createNewUser(string $name, string $email, string $password)
 		{
 			$userInputErrors = $this->validateNewUserInfo($name, $email, $password);
 			if($userInputErrors != false)
@@ -56,7 +56,7 @@
 
 		}
 		//returns user with given uid of false
-		public function getUserByID($uid)
+		public function getUserByID(int $uid)
 		{
 			$users = $this->getUsers();
 
@@ -67,7 +67,7 @@
 			//no such user
 			return false;
 		}
-		protected function getUserByEmail($email)
+		protected function getUserByEmail(string $email)
 		{
 			$users = $this->getUsers();
 
@@ -77,7 +77,7 @@
 			}
 			return false;
 		}
-		public function updateUser($user)
+		protected function updateUser($user)
 		{
 			$users = $this->getUsers();
 
@@ -125,7 +125,7 @@
 			fwrite($file, serialize($users));
 			fclose($file);
 		}
-		protected function emailExists($email)
+		protected function emailExists(string $email)
 		{
 			$users = $this->getUsers();
 			foreach($users as $user)

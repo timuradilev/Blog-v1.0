@@ -3,14 +3,14 @@
 	{
 		abstract public function getNArticles(int $offset, int $number);
 		abstract public function getArticle(int $id);
-		abstract public function saveNewArticle($title, $content);
+		abstract public function saveNewArticle(string $title, string $content);
 		abstract public function deleteArticle(int $id);
 		abstract public function getNumberOfArticles();
 	}
 
 	trait ArticleInfoValidation
 	{
-		private function validateNewArticleInfo($title, $content)
+		private function validateNewArticleInfo(string $title, string $content)
 		{
 			$errors = false;
 
@@ -19,7 +19,7 @@
 					'regexp' => "/^[\d\w\p{P} ]{5,100}$/u"
 				]]))
 				$errors['title'] = true;
-			if(strlen($content) > 1000)
+			if(strlen($content) < 5 || strlen($content) > 1000)
 				$errors['content'] = true;
 
 			return $errors;

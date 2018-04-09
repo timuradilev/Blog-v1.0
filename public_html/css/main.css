@@ -7,7 +7,7 @@ hr {
 .article_title_link:hover {
 	text-decoration: none;
 }
-.error404 {
+.error_page {
 	max-width: 420px;
 	margin: 200px auto 30px;
 	padding: 0 11px;
