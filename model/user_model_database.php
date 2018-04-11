@@ -48,23 +48,29 @@
 						]);
 			$sid = session_id();
 
-			$user = new User($name, $email, USERROLE_USER, password_hash($password, PASSWORD_DEFAULT), null, $sid);
-			
-			//sql
-			$query = 'INSERT INTO users (name, email, role, sid, lastauthdate, password)
-			  		  VALUES(:name, :email, :role, :sid, :lastauthdate, :password)';
-			$stmt = $this->database->prepare($query);
-			$roleToStr[USERROLE_ADMIN] = 'admin';
-			$roleToStr[USERROLE_USER] = 'user';
-			$stmt->execute(['name' => $user->getUserName(), 'email' => $user->getEmail(), 'role' => $roleToStr[$user->getRole()], 'sid' => $user->getSID(), 'lastauthdate' => $user->getLastAuthDate(), 'password' => $user->getHashedPassword()]);
+			try {
+				$user = new User($name, $email, USERROLE_USER, password_hash($password, PASSWORD_DEFAULT), null, $sid);
+				
+				//sql
+				$query = 'INSERT INTO users (name, email, role, sid, lastauthdate, password)
+				  		  VALUES(:name, :email, :role, :sid, :lastauthdate, :password)';
+				$stmt = $this->database->prepare($query);
+				$roleToStr[USERROLE_ADMIN] = 'admin';
+				$roleToStr[USERROLE_USER] = 'user';
+				$stmt->execute(['name' => $user->getUserName(), 'email' => $user->getEmail(), 'role' => $roleToStr[$user->getRole()], 'sid' => $user->getSID(), 'lastauthdate' => $user->getLastAuthDate(), 'password' => $user->getHashedPassword()]);
 
-			if($stmt->rowCount()) {
-				$newUID = $this->database->lastInsertId();
+				if($stmt->rowCount()) {
+					$newUID = $this->database->lastInsertId();
 
-				setcookie("uid", $newUID, time() + 2678400);
+					setcookie("uid", $newUID, time() + 2678400);
+				}
+				else
+					throw new Exception("Failed to insert new user into table");
+			} catch (Throwable $er) {
+				session_destroy();
+				setcookie("sid", "", time() - 3600);
+				throw $er;
 			}
-			else
-				throw new Exception("Failed to insert new user into table");
 
 			return $userInputErrors;
 		}

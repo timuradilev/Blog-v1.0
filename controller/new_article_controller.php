@@ -11,46 +11,59 @@
 		//preps and actions
 		public function __construct()
 		{
-			$this->model = getArticleModelInstance();
-			$this->userModel = getUserModelInstance();
+			try {
+				$this->model = getArticleModelInstance();
+				$this->userModel = getUserModelInstance();
 
-			if(!$this->userModel->isAuthorized()) {
-				header("Location: /");
-				exit();
-			}
-
-			//actions
-			if(isset($_REQUEST['action']) && $_REQUEST['action'] === "newarticle" && !empty($_REQUEST['title']) && !empty($_REQUEST['content'])) {
-				$this->userInputErrors = $this->model->saveNewArticle($_REQUEST['title'], $_REQUEST['content']);
-
-				if(empty($this->userInputErrors)) {
+				if(!$this->userModel->isAuthorized()) {
 					header("Location: /");
 					exit();
 				}
-			}
-			elseif(isset($_REQUEST['action']) && $_REQUEST['action'] === 'random') {
-				//make random title and content
-				$loremIpsum = array_map("strip_tags", file("http://loripsum.net/api/1/short/headers", FILE_IGNORE_NEW_LINES));
 
-				$title = $loremIpsum[0];
-				$content = $loremIpsum[2];
+				//actions
+				if(isset($_REQUEST['action']) && $_REQUEST['action'] === "newarticle" && !empty($_REQUEST['title']) && !empty($_REQUEST['content'])) {
+					$this->userInputErrors = $this->model->saveNewArticle($_REQUEST['title'], $_REQUEST['content']);
 
-				if(!empty($this->userInputErrors = $this->model->saveNewArticle($title, $content))) {
-					include "../public_html/servererror.php";
+					if(empty($this->userInputErrors)) {
+						header("Location: /");
+						exit();
+					}
+				}
+				elseif(isset($_REQUEST['action']) && $_REQUEST['action'] === 'random') {
+					//make random title and content
+					$loremIpsum = array_map("strip_tags", file("http://loripsum.net/api/1/short/headers", FILE_IGNORE_NEW_LINES));
+
+					$title = $loremIpsum[0];
+					$content = $loremIpsum[2];
+
+					if(!empty($this->userInputErrors = $this->model->saveNewArticle($title, $content))) {
+						include "../public_html/servererror.php";
+						exit();
+					}
+
+					header("Location: /");
 					exit();
 				}
-
-				header("Location: /");
+			} catch (Throwable $ex) {
+				include "../public_html/servererror.php";
 				exit();
 			}
 		}
 		public function isAuthorized()
 		{
-			return $this->userModel->isAuthorized();
+			try {
+				return $this->userModel->isAuthorized();
+			} catch (Throwable $ex) {
+				return false;
+			}
 		}
 		public function getUserName()
 		{
-			return $this->userModel->getUserName();
+			try {
+				return $this->userModel->getUserName();
+			} catch (Throwable $ex) {
+				return "ошибка";
+			}	
 		}
 	}
 

@@ -45,12 +45,19 @@
 							"read_and_close"  => true
 						]);
 			$sid = session_id();
-			setcookie("uid", $newUID, time() + 2678400);
 
-			$newUser = new User($name, $email, USERROLE_USER, password_hash($password, PASSWORD_DEFAULT), $newUID, $sid);
+			try {
+				$newUser = new User($name, $email, USERROLE_USER, password_hash($password, PASSWORD_DEFAULT), $newUID, $sid);
 
-			$users[] = $newUser;
-			$this->saveUsers($users);
+				$users[] = $newUser;
+				$this->saveUsers($users);
+
+				setcookie("uid", $newUID, time() + 2678400);
+			} catch (Throwable $er) {
+				session_destroy();
+				setcookie("sid", "", time() - 3600);
+				throw $er;
+			}
 
 			return $userInputErrors;
 
@@ -121,7 +128,6 @@
 		{
 			$file = fopen($this->path, "r+t");
 			flock($file, LOCK_EX);
-			ftruncate($file, 0);
 			fwrite($file, serialize($users));
 			fclose($file);
 		}

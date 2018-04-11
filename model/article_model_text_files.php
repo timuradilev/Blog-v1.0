@@ -77,24 +77,27 @@
 			$author = $userModel->getUserName();
 			$article = new Article($id, $title, $content, $uid, $author);
 			//Создать файл
-			$newFileName = (string)$id;
-			if(($file = fopen("{$this->path}/$newFileName", "xt")) === false)
-				throw new Exception("Failed to create a new file!");
-			flock($file, LOCK_EX);
-			$lastIdFileName = "{$this->path}/lastid.data";
-			$lastIdFile = fopen($lastIdFileName, "r+t") or die("Не могу открыть файл!");
-			flock($lastIdFile, LOCK_EX);
-			ftruncate($lastIdFile, 0);
-			//Записать в файл все данные
-			fwrite($file, $article->title."\n");
-			fwrite($file, $article->authorUID."\n");
-			fwrite($file, $article->creationDate."\n");
-			fwrite($file, $article->content."\n");
-			//изменить lastId
-			fwrite($lastIdFile, $article->id);
-			//Закрыть файлы
-			fclose($file);
-			fclose($lastIdFile);
+			try {
+				$file = fopen("{$this->path}/$id", "xt");
+				$lastIdFile = fopen("{$this->path}/lastid.data", "r+t");
+				flock($file, LOCK_EX);
+				flock($lastIdFile, LOCK_EX);
+				//Записать в файл все данные
+				fwrite($file, $article->title."\n");
+				fwrite($file, $article->authorUID."\n");
+				fwrite($file, $article->creationDate."\n");
+				fwrite($file, $article->content."\n");
+				//изменить lastId
+				fwrite($lastIdFile, $article->id);
+				//Закрыть файлы
+				fclose($file);
+				fclose($lastIdFile);
+			}
+			catch (Throwable $er) {
+				if($file) {
+					unlink("{$this->path}/$id");
+				}
+			}
 
 			return $userInputErrors;
 		}
@@ -108,18 +111,6 @@
 				$uid = $userModel->getUserID();
 
 				if($article->authorUID == $uid) {
-					//если статья является самой новой и ее ИД хранится в файле lastid.data
-					if($id == ($lastId = $this->getLastId())) {
-						//узнать ид предыдущей по номеру ид статьи
-						for(--$lastId; $lastId && !file_exists("{$this->path}/$lastId"); --$lastId);
-
-						//записать новый lastid
-						$file = fopen("{$this->path}/lastid.data", "r+t");
-						flock($file, LOCK_EX);
-						ftruncate($file, 0);
-						fwrite($file, $lastId);
-						fclose($file);
-					}
 					//delete article
 					$file = fopen("{$this->path}/$id", "r");
 					flock($file, LOCK_EX);
@@ -152,7 +143,7 @@
 		{
 			$fileName = "{$this->path}/lastid.data";
 
-			$file = fopen($fileName, "rt") or die("Не могу открыть файл!");
+			$file = fopen($fileName, "rt");
 			flock($file, LOCK_SH);
 			$id = fgets($file);
 			fclose($file);

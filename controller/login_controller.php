@@ -9,22 +9,28 @@
 		private $userModel;
 		public function __construct()
 		{
-			$this->userModel = getUserModelInstance();
+			try {
+				$this->userModel = getUserModelInstance();
 
-			if($this->userModel->isAuthorized()) { 
-				if(isset($_REQUEST['action']) && $_REQUEST['action'] === "logout")
-					$this->userModel->logout();
+				if($this->userModel->isAuthorized()) { 
+					if(isset($_REQUEST['action']) && $_REQUEST['action'] === "logout")
+						$this->userModel->logout();
 
-				header("Location: /");
-				exit();
-			} elseif(isset($_REQUEST['action']) && $_REQUEST['action'] === "login" && !empty($_REQUEST['email']) && !empty($_REQUEST['password'])) {
-				if(empty($this->userInputErrors = $this->userModel->login($_REQUEST['email'], $_REQUEST['password']))) {
-					//redirect to the main page
 					header("Location: /");
 					exit();
+				} elseif(isset($_REQUEST['action']) && $_REQUEST['action'] === "login" && !empty($_REQUEST['email']) && !empty($_REQUEST['password'])) {
+					if(empty($this->userInputErrors = $this->userModel->login($_REQUEST['email'], $_REQUEST['password']))) {
+						//redirect to the main page
+						header("Location: /");
+						exit();
+					}
 				}
+			} catch (Throwable $ex) {
+				include "../public_html/servererror.php";
+				exit();
 			}
 		}
 	}
 
 	$controller = new LoginController();
+	

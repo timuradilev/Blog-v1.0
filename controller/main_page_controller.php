@@ -19,6 +19,7 @@
 				$this->userModel = getUserModelInstance();
 
 				$this->currentPage = isset($_REQUEST['page']) ? (int)$_REQUEST['page'] : 1;
+				
 				$this->numberOfPages =ceil((double)$this->model->getNumberOfArticles() / $this->numOfEntries);
 				//when no the 'page' parameter, get the first page
 				if($this->currentPage >= 1 && $this->numberOfPages >= $this->currentPage) {
@@ -29,9 +30,8 @@
 					include "../public_html/404.php";
 					exit();
 				}
-			}
-			catch(Exception $ex){
-				echo $ex->getMessage();
+			} catch (Throwable $ex) {
+				include "../public_html/servererror.php";
 				exit();
 			}
 		}
@@ -52,15 +52,27 @@
 		}
 		public function userAllowedToDelete($authorUID)
 		{
-			return $this->userModel->isAuthorized() ? $this->userModel->isAdmin() || $this->userModel->getUserID() == $authorUID : false;
+			try {
+				return $this->userModel->isAuthorized() ? $this->userModel->isAdmin() || $this->userModel->getUserID() == $authorUID : false;
+			} catch (Throwable $ex) {
+				return false;
+			}
 		}
 		public function isAuthorized()
 		{
-			return $this->userModel->isAuthorized();
+			try {
+				return $this->userModel->isAuthorized();
+			} catch (Throwable $ex) {
+				return false;
+			}
 		}
 		public function getUserName()
 		{
-			return $this->userModel->getUserName();
+			try {
+				return $this->userModel->getUserName();
+			} catch (Throwable $ex) {
+				return "ошибка";
+			}
 		}
 	}
 

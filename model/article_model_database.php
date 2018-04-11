@@ -80,7 +80,7 @@
 					  (title, creationdate, authoruid, content)
 					  VALUES (:title, :creationdate, :authoruid, :content)';
 			$statement = $this->database->prepare($query);
-			$statement->execute(['title' => $article->title, 'creationdate' => $article->creationDate, 'authoruid' => $article->authorUID, 'content' => $article->content ]);
+			$statement->execute(['title' => $article->title, 'creationdate' => $article->creationDate, 'authoruid' => $article->authorUID, 'content' => $article->content]);
 
 			return $userInputErrors;
 		}
