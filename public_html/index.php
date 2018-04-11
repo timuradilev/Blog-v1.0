@@ -4,7 +4,6 @@
 	error_reporting(E_ALL);
 	ini_set("display_errors", "on");
 
-	//get the main page controller
 	require_once "../controller/main_page_controller.php";
 ?>
 <!DOCTYPE html>
@@ -17,22 +16,16 @@
 <?php include "../views/header.php"; ?>
 <div class="container">
 	<?php include "../views/pagination.php"; ?>
-	<!--
-		output articles
-	-->
+
 	<?php foreach($controller->articles as $art) { ?>
 	<h4><a class="article_title_link" href="article.php?id=<?=$art->id; ?>"><?=$art->title?></a></h4>
-	<em class="text-secondary"><?=$art->id?></em>
-	<!-- 
-		delete button
-	-->
+	
+	<h6 class="text-secondary">Автор статьи <?=$art->author?>. Создал <?=$art->creationDate?></h6>
 	<?php if($controller->userAllowedToDelete($art->authorUID)) : ?>
 	<button type="button" class="close float-left" data-toggle="modal" data-target="#deleteArticle<?=$art->id?>" aria-label="Close">
   		<span aria-hidden="true">&times;</span>
 	</button>
-	<!-- 
-		Modal for delete button 
-	-->
+
 	<div class="modal fade" id="deleteArticle<?=$art->id?>" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
   		<div class="modal-dialog" role="document">
     		<div class="modal-content">
@@ -55,15 +48,13 @@
   		</div>
 	</div>
 	<?php endif; ?>
-	<!--
-		the rest of article
-	-->
-	<h6 class="text-secondary">Автор статьи <?=$art->author?>. Создал <?=$art->creationDate?></h6>
-	<p class="text-success"><?=$art->content?></p>
+	
+	<br>
+	<p><?=$art->content?></p>
 	<hr> <br />
 	<?php } ?>
 	<?php include "../views/pagination.php"; ?>
-</div>	<!-- .container ends here -->
+</div>
 	<?php include "../views/body_footer_template.html"; ?>
 </body>
 </html>

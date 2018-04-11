@@ -2,12 +2,14 @@
 	require_once "article_model.php";
 	require_once "../classes/article.php";
 	require_once "model.php";
+	require_once "../classes/limiter.php";
 
 	class ArticleModelDatabase extends ArticleModel
 	{
 		use ArticleInfoValidation;
 		
 		private $database;
+		private $limiter;
 
 		public function __construct()
 		{
@@ -17,8 +19,8 @@
 				$connectionInfo['password'],
 				[PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
 			);
+			$this->limiter = new Limiter($this->database, "articles");
 		}
-		//вернуть $number статей начиная со статьи, имеющей позицию $offset по отношению к самой новой странице(у нее позиция - 0).
 		public function getNArticles(int $offset, int $number)
 		{
 			$articles = [];
@@ -41,7 +43,6 @@
 			
 			return $articles;
 		}
-		//возвращает статью с указанным id
 		public function getArticle(int $id)
 		{
 			//sql
@@ -61,13 +62,15 @@
 			else
 				return false;
 		}
-		//сохранить новую статью
 		public function saveNewArticle(string $title, string $content)
 		{
+			$this->limiter->check();
+
 			//validate and encode
 			$userInputErrors = $this->validateNewArticleInfo($title, $content);
 			if($userInputErrors)
 				return $userInputErrors;
+			$title = htmlspecialchars($title, ENT_QUOTES);
 			$content = htmlspecialchars($content, ENT_QUOTES);
 
 			//make Article object
@@ -84,7 +87,6 @@
 
 			return $userInputErrors;
 		}
-		//удалить статью
 		public function deleteArticle(int $id)
 		{
 			//get authorUID from DB
@@ -113,7 +115,6 @@
 			}
 			return false;
 		}
-		//вернуть общее количество существующих статей
 		public function getNumberOfArticles() : int
 		{
 			//sql

@@ -6,13 +6,10 @@
 </head>
 <body>
 <div class="container">
-	<!--
-		Название сайта и ссылка на создание статей
-	-->
 	<div class="row align-items-center mt-3 mb-3">
-	<div class="col-md-4">
-		<a class="h4" href="/">Блог</a>
-	</div>
+		<div class="col-md-4">
+			<a class="h4" href="/">Блог</a>
+		</div>
 	</div>
 </div>
 <hr>

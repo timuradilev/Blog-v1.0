@@ -8,7 +8,7 @@
 		private $model;
 		private $userModel;
 
-		//preps and actions
+		// the main work is done in this constructor
 		public function __construct()
 		{
 			try {
@@ -19,8 +19,6 @@
 					header("Location: /");
 					exit();
 				}
-
-				//actions
 				if(isset($_REQUEST['action']) && $_REQUEST['action'] === "newarticle" && !empty($_REQUEST['title']) && !empty($_REQUEST['content'])) {
 					$this->userInputErrors = $this->model->saveNewArticle($_REQUEST['title'], $_REQUEST['content']);
 

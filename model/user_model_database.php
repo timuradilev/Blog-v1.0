@@ -1,6 +1,7 @@
 <?php
 	require_once "user_model.php";
 	require_once "../classes/user.php";
+	require_once "../classes/limiter.php";
 
 	class UserModelDatabase extends UserModel
 	{
@@ -9,6 +10,7 @@
 
 		protected $user; //current user
 		private $database;
+		private $limiter;
 
 		public function __construct()
 		{
@@ -18,6 +20,7 @@
 				$connectionInfo['password'],
 				[PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
 			);
+			$this->limiter = new Limiter($this->database, "users");
 
 			//check uid and sid in cookie
 			if(isset($_COOKIE['uid']) && isset($_COOKIE['sid'])) {
@@ -36,6 +39,8 @@
 		// creates new user, saves to database and login user
 		public function createNewUser(string $name, string $email, string $password)
 		{
+			$this->limiter->check();
+
 			$userInputErrors = $this->validateNewUserInfo($name, $email, $password);
 			if($userInputErrors != false)
 				return $userInputErrors;

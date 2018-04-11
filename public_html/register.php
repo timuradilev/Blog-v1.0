@@ -61,7 +61,7 @@
 			</form>
 		</div>
 	</div>
-</div> <!-- .container -->	
+</div>	
 	<?php include "../views/body_footer_template.html"; ?>
 </body>
 </html>

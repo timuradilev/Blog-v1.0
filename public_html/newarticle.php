@@ -12,15 +12,11 @@
 <head>
 	<meta charset='utf-8'>
 	<title>Новая статья</title>
-	<!--<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>-->
 	<?php include "../views/head_template.html"; ?>
 </head>
 <body>
 <?php include "../views/header.php"; ?>
 <div class="container">
-	<!--
-		Форма ввода названия и текста статьи
-	-->
 	<h4>Разместить статью</h4>
 	<form action="newarticle.php" method="POST">
   		<div class="form-group">

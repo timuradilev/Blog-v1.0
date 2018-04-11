@@ -5,11 +5,11 @@
 
 	class User
 	{
+		protected $uid;
 		protected $name;
 		protected $email;
 		protected $role;
 		protected $hashedPassword;
-		protected $uid; //user id is to set to cookie
 		protected $sid;
 		protected $lastAuthDate;
 

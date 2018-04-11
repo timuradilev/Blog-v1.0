@@ -12,6 +12,7 @@
 		private $userModel;
 		private $protocol = "http://";
 
+		// the main work is done in this constructor
 		public function __construct()
 		{
 			try {
@@ -19,11 +20,9 @@
 				$this->userModel = getUserModelInstance();
 
 				$this->currentPage = isset($_REQUEST['page']) ? (int)$_REQUEST['page'] : 1;
-				
 				$this->numberOfPages =ceil((double)$this->model->getNumberOfArticles() / $this->numOfEntries);
-				//when no the 'page' parameter, get the first page
+
 				if($this->currentPage >= 1 && $this->numberOfPages >= $this->currentPage) {
-					//calculate the entry number that will be the first entry on the page
 					$offset = $this->numOfEntries * ($this->currentPage - 1);
 					$this->articles = $this->model->getNArticles($offset, $this->numOfEntries);
 				} else {

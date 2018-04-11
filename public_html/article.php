@@ -15,21 +15,14 @@
 <body>
 <?php include "../views/header.php"; ?>
 <div class="container">
-	<!--
-		output article's name and id
-	-->
+
 	<h4><?=$article->title?></h4>
-	<em class="text-secondary"><?=$article->id?></em>
-	<!-- 
-		delete button
-	-->
+  <h6 class="text-secondary">Автор статьи <?=$article->author?>. Создал <?=$article->creationDate?></h6>
 	<?php if($controller->userAllowedToDelete()) : ?>
 	<button type="button" class="close float-left" data-toggle="modal" data-target="#deleteArticle<?=$article->id?>" aria-label="Close">
   		<span aria-hidden="true">&times;</span>
 	</button>
-	<!-- 
-		Modal for delete button 
-	-->
+
 	<div class="modal fade" id="deleteArticle<?=$article->id?>" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
   		<div class="modal-dialog" role="document">
     		<div class="modal-content">
@@ -52,13 +45,11 @@
   		</div>
 	</div>
 	<?php endif; ?>
-	<!--
-		the rest of article
-	-->
-	<h6 class="text-secondary">Автор статьи <?=$article->author?>. Создал <?=$article->creationDate?></h6>
-	<p class="text-success"><?=$article->content?></p>
+
+  <br>
+	<p><?=$article->content?></p>
 	<hr> <br />
-</div>	<!-- .container ends here -->
+</div>
 	<?php include "../views/body_footer_template.html"; ?>
 </body>
 </html>

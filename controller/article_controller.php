@@ -6,6 +6,8 @@
 		public $article;
 		private $model;
 		private $userModel;
+
+		// the main work is done in this constructor
 		public function __construct()
 		{
 			try {
@@ -24,7 +26,6 @@
 							exit();
 						}
 					}
-
 					$this->article = $this->model->getArticle($articleId);
 					if (false == $this->article) {
 						include "../public_html/404.php";

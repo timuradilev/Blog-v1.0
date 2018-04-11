@@ -13,16 +13,14 @@
 		{
 			$this->path = $path;
 		}
-		//вернуть $number статей начиная со статьи, имеющей позицию $offset по отношению к самой новой странице(у нее позиция - 0).
 		public function getNArticles(int $offset, int $number)
 		{
 			$articles = [];
-			//определить id нужной статьи
+			//find article id that will be first article in the final array
 			for($curId = $this->getLastId(), $curPos = 0; $curId && $curPos != $offset; --$curId) {
 				if(file_exists("{$this->path}/$curId"))
 					++$curPos;
 			}
-			//начать считывать в массив $articles нужное количество статей
 			for(; $number && $curId; --$curId) {
 				if(file_exists("{$this->path}/$curId")) {
 					--$number;
@@ -42,7 +40,6 @@
 			}
 			return $articles;
 		}
-		//возвращает статью с указанным id
 		public function getArticle(int $id)
 		{
 			if(file_exists("{$this->path}/$id")) {
@@ -61,35 +58,34 @@
 			else
 				return false;
 		}
-		//сохранить новую статью
 		public function saveNewArticle(string $title, string $content)
 		{
 			//validate and encode
 			$userInputErrors = $this->validateNewArticleInfo($title, $content);
 			if($userInputErrors)
 				return $userInputErrors;
+			$title = htmlspecialchars($title, ENT_QUOTES);
 			$content = htmlspecialchars($content, ENT_QUOTES);
 
 			$userModel = getUserModelInstance();
-			//новый id
+			//get new article id
 			$id = $this->getLastId() + 1;
 			$uid = $userModel->getUserID();
 			$author = $userModel->getUserName();
 			$article = new Article($id, $title, $content, $uid, $author);
-			//Создать файл
 			try {
 				$file = fopen("{$this->path}/$id", "xt");
 				$lastIdFile = fopen("{$this->path}/lastid.data", "r+t");
 				flock($file, LOCK_EX);
 				flock($lastIdFile, LOCK_EX);
-				//Записать в файл все данные
+				
 				fwrite($file, $article->title."\n");
 				fwrite($file, $article->authorUID."\n");
 				fwrite($file, $article->creationDate."\n");
 				fwrite($file, $article->content."\n");
-				//изменить lastId
+				
 				fwrite($lastIdFile, $article->id);
-				//Закрыть файлы
+				
 				fclose($file);
 				fclose($lastIdFile);
 			}
@@ -97,21 +93,20 @@
 				if($file) {
 					unlink("{$this->path}/$id");
 				}
+				throw $er;
 			}
 
 			return $userInputErrors;
 		}
-		//удалить статью
 		public function deleteArticle(int $id) : bool
 		{
 			$article = $this->getArticle($id);
-			//если статья сущ.
+
 			if(false != $article) {
 				$userModel = getUserModelInstance();
 				$uid = $userModel->getUserID();
 
 				if($article->authorUID == $uid) {
-					//delete article
 					$file = fopen("{$this->path}/$id", "r");
 					flock($file, LOCK_EX);
 					unlink("{$this->path}/$id");
@@ -122,23 +117,18 @@
 			}
 			return false;
 		}
-		//вернуть общее количество существующих статей
 		public function getNumberOfArticles() : int
 		{
-			//открыть текущий каталог
-			//посчитать количество файлов, не считая файл lastid.data
 			$dir = dir($this->path);
 
 			$count = 0;
 			while(false !== ($file = $dir->read())) {
 				++$count;
 			}
-
 			$dir->close();
 
-			return $count - 3; // три файла: ".", ".." и 'lastid.data'
+			return $count - 3; // - ".", ".." and "lastid.data"
 		}
-		//олучить ид последней статьи
 		private function getLastId() : int
 		{
 			$fileName = "{$this->path}/lastid.data";
