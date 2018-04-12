@@ -27,10 +27,10 @@
 
 					$file = fopen("{$this->path}/$curId", "rt");
 					flock($file, LOCK_SH);
-					$articleName = fgets($file);
-					$articleAuthorUID = fgets($file);
-					$articleCreationDate = fgets($file);
-					$articleContent = file_get_contents("{$this->path}/$curId", false, null, ftell($file));
+					$articleName = rtrim(fgets($file));
+					$articleAuthorUID = rtrim(fgets($file));
+					$articleCreationDate = rtrim(fgets($file));
+					$articleContent = rtrim(file_get_contents("{$this->path}/$curId", false, null, ftell($file)));
 					fclose($file);
 
 					$user = (getUserModelInstance())->getUserByID($articleAuthorUID);
@@ -45,12 +45,11 @@
 			if(file_exists("{$this->path}/$id")) {
 				$file = fopen("{$this->path}/$id", "rt");
 				flock($file, LOCK_SH);
-				$articleName = fgets($file);
-				$articleAuthorUID = fgets($file);
-				$articleCreationDate = fgets($file);
-				$articleContent = file_get_contents("{$this->path}/$id", false, null, ftell($file));
+				$articleName = rtrim(fgets($file));
+				$articleAuthorUID = rtrim(fgets($file));
+				$articleCreationDate = rtrim(fgets($file));
+				$articleContent = rtrim(file_get_contents("{$this->path}/$id", false, null, ftell($file)));
 				fclose($file);
-
 				$user = (getUserModelInstance())->getUserByID($articleAuthorUID);
 
 				return new Article($id, $articleName, $articleContent, $articleAuthorUID, $user->getUserName(), $articleCreationDate);

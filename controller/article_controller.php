@@ -3,7 +3,6 @@
 
 	class ArticleController
 	{
-		public $article;
 		private $model;
 		private $userModel;
 
@@ -13,7 +12,14 @@
 			try {
 				$this->model = getArticleModelInstance();
 				$this->userModel = getUserModelInstance();
-
+			} catch (Throwable $ex) {
+				include "../public_html/servererror.php";
+				exit();
+			}
+		}
+		public function getData()
+		{
+			try {
 				if (isset($_REQUEST['id'])) {
 					$articleId = (int)$_REQUEST['id'];
 
@@ -26,11 +32,12 @@
 							exit();
 						}
 					}
-					$this->article = $this->model->getArticle($articleId);
-					if (false == $this->article) {
+					$article = $this->model->getArticle($articleId);
+					if (false == $article) {
 						include "../public_html/404.php";
 						exit();
 					}
+					return $article;
 				} else {
 					include "../public_html/404.php";
 					exit();
@@ -40,10 +47,10 @@
 				exit();
 			}
 		}
-		public function userAllowedToDelete()
+		public function userAllowedToDelete($authorUID)
 		{
 			try {
-				return $this->userModel->isAuthorized() ? $this->userModel->isAdmin() || $this->userModel->getUserID() == $this->article->authorUID : false;
+				return $this->userModel->isAuthorized() ? $this->userModel->isAdmin() || $this->userModel->getUserID() == $authorUID : false;
 			} catch (Throwable $ex) {
 				return false;
 			}
@@ -67,4 +74,4 @@
 	}
 
 	$controller = new ArticleController();
-	$article = $controller->article;
+	$article = $controller->getData();

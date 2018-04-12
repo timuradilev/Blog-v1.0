@@ -3,8 +3,7 @@
 	require_once "../model/model.php";
 
 	class NewArticleController
-	{
-		public $userInputErrors;
+	{		
 		private $model;
 		private $userModel;
 
@@ -19,13 +18,23 @@
 					header("Location: /");
 					exit();
 				}
+			} catch (Throwable $er) {
+				include "../public_html/servererror.php";
+				exit();
+			}
+		}
+		public function executeUserActions()
+		{
+			try {
 				if(isset($_REQUEST['action']) && $_REQUEST['action'] === "newarticle" && !empty($_REQUEST['title']) && !empty($_REQUEST['content'])) {
-					$this->userInputErrors = $this->model->saveNewArticle($_REQUEST['title'], $_REQUEST['content']);
+					$userInputErrors = $this->model->saveNewArticle($_REQUEST['title'], $_REQUEST['content']);
 
-					if(empty($this->userInputErrors)) {
+					if(empty($userInputErrors)) {
 						header("Location: /");
 						exit();
 					}
+					else
+						return $userInputErrors;
 				}
 				elseif(isset($_REQUEST['action']) && $_REQUEST['action'] === 'random') {
 					//make random title and content
@@ -42,7 +51,7 @@
 					header("Location: /");
 					exit();
 				}
-			} catch (Throwable $ex) {
+			} catch (Throwable $er) {
 				include "../public_html/servererror.php";
 				exit();
 			}
@@ -66,3 +75,4 @@
 	}
 
 	$controller = new NewArticleController();
+	$userInputErrors = $controller->executeUserActions();

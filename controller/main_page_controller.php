@@ -4,10 +4,8 @@
 
 	class MainPageController
 	{
-		public $articles;
-		public $currentPage;
-		public $numberOfPages;
-		public $numOfEntries = 4;
+		private $currentPage;
+		private $numberOfPages;
 		private $model;
 		private $userModel;
 		private $protocol = "http://";
@@ -18,13 +16,22 @@
 			try {
 				$this->model = getArticleModelInstance();
 				$this->userModel = getUserModelInstance();
-
+			} catch (Throwable $ex) {
+				include "../public_html/servererror.php";
+				exit();
+			}
+		}
+		public function getData($numberOfArticles)
+		{
+			try {
 				$this->currentPage = isset($_REQUEST['page']) ? (int)$_REQUEST['page'] : 1;
-				$this->numberOfPages =ceil((double)$this->model->getNumberOfArticles() / $this->numOfEntries);
+				$this->numberOfPages =ceil((double)$this->model->getNumberOfArticles() / $numberOfArticles);
 
 				if($this->currentPage >= 1 && $this->numberOfPages >= $this->currentPage) {
-					$offset = $this->numOfEntries * ($this->currentPage - 1);
-					$this->articles = $this->model->getNArticles($offset, $this->numOfEntries);
+					$offset = $numberOfArticles * ($this->currentPage - 1);
+					$articles = $this->model->getNArticles($offset, $numberOfArticles);
+
+					return [$articles, $this->currentPage, $this->numberOfPages];
 				} else {
 					include "../public_html/404.php";
 					exit();
@@ -34,7 +41,6 @@
 				exit();
 			}
 		}
-
 		public function makePageUrl($pageNumber) : string
 		{
 			return $this->protocol.$_SERVER['SERVER_NAME']."/?page=$pageNumber";
@@ -76,3 +82,4 @@
 	}
 
 	$controller = new MainPageController();
+	list($articles, $currentPage, $numberOfPages) = $controller->getData(4);

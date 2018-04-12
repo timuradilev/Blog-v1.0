@@ -17,7 +17,7 @@
 <div class="container">
 	<?php include "../views/pagination.php"; ?>
 
-	<?php foreach($controller->articles as $art) { ?>
+	<?php foreach($articles as $art) { ?>
 	<h4><a class="article_title_link" href="article.php?id=<?=$art->id; ?>"><?=$art->title?></a></h4>
 	
 	<h6 class="text-secondary">Автор статьи <?=$art->author?>. Создал <?=$art->creationDate?></h6>

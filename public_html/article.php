@@ -18,7 +18,7 @@
 
 	<h4><?=$article->title?></h4>
   <h6 class="text-secondary">Автор статьи <?=$article->author?>. Создал <?=$article->creationDate?></h6>
-	<?php if($controller->userAllowedToDelete()) : ?>
+	<?php if($controller->userAllowedToDelete($article->authorUID)) : ?>
 	<button type="button" class="close float-left" data-toggle="modal" data-target="#deleteArticle<?=$article->id?>" aria-label="Close">
   		<span aria-hidden="true">&times;</span>
 	</button>

@@ -22,16 +22,16 @@
   		<div class="form-group">
     		<label for="ArticleNameInput">Заголовок</label>
     		<input type="text" class="form-control" id="ArticleNameInput" placeholder="Название статьи" name="title" autofocus autocomplete="off"
-    			value="<?=!empty($controller->userInputErrors)? htmlspecialchars($_REQUEST['title'],ENT_QUOTES):"";?>" 
+    			value="<?=!empty($userInputErrors)? htmlspecialchars($_REQUEST['title'],ENT_QUOTES):"";?>" 
     		required>
-    		<?php if(!empty($controller->userInputErrors['title'])): ?>
+    		<?php if(!empty($userInputErrors['title'])): ?>
     			<small class="text-danger"><em>Некорректное название</em></small>
     		<?php endif; ?>
   		</div>
   		<div class="form-group">
     		<label for="TextInput">Текст</label>
-    		<textarea class="form-control" id="TextInput" rows="15" name="content" required><?=!empty($controller->userInputErrors)? htmlspecialchars($_REQUEST['content'],ENT_QUOTES):"";?></textarea>
-    		<?php if(!empty($controller->userInputErrors['content'])): ?>
+    		<textarea class="form-control" id="TextInput" rows="15" name="content" required><?=!empty($userInputErrors)? htmlspecialchars($_REQUEST['content'],ENT_QUOTES):"";?></textarea>
+    		<?php if(!empty($userInputErrors['content'])): ?>
     			<small class="text-danger"><em>Текст слишком короткий или длинный</em></small>
     		<?php endif; ?>
   		</div>

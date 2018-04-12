@@ -14,6 +14,7 @@
 	<?php include "../views/head_template.html"; ?>
 </head>
 <body>
+<?php include "../views/header_static.html"; ?>
 <div class="container">
 	<div class="row">
 		<div class="col-sm-4 offset-sm-4">
@@ -24,7 +25,7 @@
 				    	<div class="input-group-prepend">
 	      					<div class="input-group-text"><i class="far fa-envelope"></i></div>
 	    				</div>
-				    	<input type="email" class="form-control" id="inputEmail1" placeholder="" name="email" autofocus required value="<?=!empty($controller->userInputErrors)? htmlspecialchars($_REQUEST['email'], ENT_QUOTES):"";?>">
+				    	<input type="email" class="form-control" id="inputEmail1" placeholder="" name="email" autofocus required value="<?=!empty($userInputErrors)? htmlspecialchars($_REQUEST['email'], ENT_QUOTES):"";?>">
 					</div>
 				</div>
 			  	<div class="form-group">
@@ -39,7 +40,7 @@
 			  	</div>
 			  <button type="submit" class="btn btn-primary" name="action" value="login">Submit</button>
 			</form>
-			<?php if(!empty($controller->userInputErrors['wrongUserOrPassword'])): ?>
+			<?php if(!empty($userInputErrors['wrongUserOrPassword'])): ?>
 			<br>
 			<em class="text-danger">Неправильный пользователь или пароль</em>
 			<?php endif; ?>
