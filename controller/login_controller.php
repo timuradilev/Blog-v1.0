@@ -1,7 +1,7 @@
 <?php
-	//first, check whether user is authorized
 	require_once "../model/model.php";
 	require_once "../classes/user.php";
+	require_once "utility.php";
 
 	class LoginController
 	{

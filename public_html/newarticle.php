@@ -1,11 +1,4 @@
-<?php
-	setlocale(LC_CTYPE, 'ru.RU.UTF-8');
-	date_default_timezone_set("Europe/Moscow");	
-	error_reporting(E_ALL);
-	ini_set("display_errors", "on");
-
-	include_once "../controller/new_article_controller.php";
-?>
+<?php include_once "../controller/new_article_controller.php"; ?>
 
 <!DOCTYPE html>
 <html lang='ru'>

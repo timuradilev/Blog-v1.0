@@ -1,6 +1,7 @@
 <?php
 	require_once "../model/model.php";
 	require_once "../classes/user.php";
+	require_once "utility.php";
 
 	class RegistrationController
 	{
