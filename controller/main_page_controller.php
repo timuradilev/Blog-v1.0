@@ -2,6 +2,7 @@
 	require_once "../model/model.php";
 	require_once "../classes/article.php";
 	require_once "utility.php";
+	require_once "../vendor/autoload.php";
 
 	class MainPageController
 	{
@@ -10,14 +11,19 @@
 		private $model;
 		private $userModel;
 		private $protocol = "http://";
+		private $logger;
 
 		// the main work is done in this constructor
 		public function __construct()
 		{
 			try {
+				$this->logger = new Monolog\Logger('my_logger');
+				$this->logger->pushHandler(new Monolog\Handler\StreamHandler("../log/error.log", Monolog\Logger::DEBUG));
+
 				$this->model = getArticleModelInstance();
 				$this->userModel = getUserModelInstance();
 			} catch (Throwable $ex) {
+				$this->logger->alert($ex->getMessage(), [$ex->getFile() => $ex->getLine()]);
 				include "../public_html/servererror.php";
 				exit();
 			}
@@ -38,6 +44,7 @@
 					exit();
 				}
 			} catch (Throwable $ex) {
+				$this->logger->alert($ex->getMessage(), [$ex->getFile() => $ex->getLine()]);
 				include "../public_html/servererror.php";
 				exit();
 			}
@@ -61,6 +68,7 @@
 			try {
 				return $this->userModel->isAuthorized() ? $this->userModel->isAdmin() || $this->userModel->getUserID() == $authorUID : false;
 			} catch (Throwable $ex) {
+				$this->logger->error($ex->getMessage(), [$ex->getFile() => $ex->getLine()]);
 				return false;
 			}
 		}
@@ -69,6 +77,7 @@
 			try {
 				return $this->userModel->isAuthorized();
 			} catch (Throwable $ex) {
+				$this->logger->alert($ex->getMessage(), [$ex->getFile() => $ex->getLine()]);
 				return false;
 			}
 		}
@@ -77,6 +86,7 @@
 			try {
 				return $this->userModel->getUserName();
 			} catch (Throwable $ex) {
+				$this->logger->error($ex->getMessage(), [$ex->getFile() => $ex->getLine()]);
 				return "ошибка";
 			}
 		}

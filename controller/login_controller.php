@@ -2,17 +2,23 @@
 	require_once "../model/model.php";
 	require_once "../classes/user.php";
 	require_once "utility.php";
+	require_once "../vendor/autoload.php";
 
 	class LoginController
 	{
 		private $userModel;
+		private $logger;
 
 		// the main work is done in this constructor
 		public function __construct()
 		{
 			try {
+				$this->logger = new Monolog\Logger('my_logger');
+				$this->logger->pushHandler(new Monolog\Handler\StreamHandler("../log/error.log", Monolog\Logger::DEBUG));
+
 				$this->userModel = getUserModelInstance();
 			} catch (Throwable $ex) {
+				$this->logger->alert($ex->getMessage(), [$ex->getFile() => $ex->getLine()]);
 				include "../public_html/servererror.php";
 				exit();
 			}
@@ -34,6 +40,7 @@
 						return $userInputErrors;
 				}
 			} catch (Throwable $ex) {
+				$this->logger->alert($ex->getMessage(), [$ex->getFile() => $ex->getLine()]);
 				include "../public_html/servererror.php";
 				exit();
 			}
