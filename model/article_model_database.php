@@ -28,7 +28,7 @@
 			//sql
 			$query = 'SELECT id, title, creationdate, authoruid, content
 					  FROM articles 
-					  ORDER BY id DESC 
+					  ORDER BY str_to_date(creationdate, "%d.%m.%Y Ð² %H:%i:%s") DESC 
 					  LIMIT :offset,:number';
 			$stmt = $this->database->prepare($query);
 			$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
