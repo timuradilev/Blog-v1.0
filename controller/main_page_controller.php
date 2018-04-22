@@ -39,6 +39,8 @@
 					$articles = $this->model->getNArticles($offset, $numberOfArticles);
 
 					return [$articles, $this->currentPage, $this->numberOfPages];
+				} elseif ($this->currentPage >= 1 && 0 == $this->numberOfPages) {
+					//show 0 articles
 				} else {
 					include "../public_html/404.php";
 					exit();
