@@ -2,7 +2,7 @@
 <!doctype html>
 <html lang="ru">
 <head>
-	<title><?= $article->title; ?>/ Blog</title>
+	<title><?= $article->title; ?>/ Блог</title>
 	<?php include "../views/head_template.html"; ?>
 </head>
 <body>

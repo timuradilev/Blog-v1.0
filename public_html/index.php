@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-	<title>База знаний по веб-программированию</title>
+	<title>Блог</title>
 	<?php include "../views/head_template.html"; ?>
 </head>
 <body>
