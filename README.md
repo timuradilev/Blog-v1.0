@@ -1,2 +1,2 @@
-# web-development-blog
-A web development blog without any CMS.
+# blog
+A blog without any CMS.
