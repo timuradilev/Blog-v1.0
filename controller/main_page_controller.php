@@ -95,4 +95,4 @@
 	}
 
 	$controller = new MainPageController();
-	list($articles, $currentPage, $numberOfPages) = $controller->getData(4);
+	list($articles, $currentPage, $numberOfPages) = $controller->getData(10);
