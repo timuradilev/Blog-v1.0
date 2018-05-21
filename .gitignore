@@ -3,3 +3,4 @@
 db/db.ini
 vendor/
 log/
+/views/extra.html
